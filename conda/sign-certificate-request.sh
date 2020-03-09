@@ -1,9 +1,34 @@
 #!/bin/bash
 
-in="$1"
-out="$2"
+# Sign certificate request
+# Params: csrPath crtPath v3[true]
 
-ca_crt="/etc/nginx/ssl/ca.crt"
-ca_key="/etc/nginx/ssl/ca.key"
+CSR="$1"
+CRT="$2"
 
-openssl x509 -req -in $in -CA $ca_crt -CAkey $ca_key -CAcreateserial -out $out -days 365
+CAKEY="ca.key"
+CACRT="ca.crt"
+CASRL="ca.srl"
+EXT="v3.ext"
+
+if [ -f "$CASRL" ]; then
+    SERIAL="-CAserial $CASRL"
+else
+    SERIAL="-CAcreateserial"
+fi
+
+V3=""
+if [ "$3" = "true" ]; then
+    V3="-extfile $EXT"
+    echo "Use v3 extention"
+fi
+
+openssl x509 \
+        -req \
+        -in $CSR \
+        -CA $CACRT \
+        -CAkey $CAKEY \
+        $SERIAL \
+        -out $CRT \
+        -days 365 \
+        $V3

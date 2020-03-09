@@ -1,5 +1,25 @@
 #!/bin/bash
 
-openssl genrsa -out ca.key 2048
+# Generate root CA
 
-openssl req -x509 -new -nodes -key ca.key -days 365 -out ca.crt -subj "/C=BY/ST=Minsk/L=Minsk/O=FeatureMine/CN=127.0.0.1"
+KEY="ca.key"
+CRT="ca.crt"
+
+COUNTRY="BY"
+STATE="Minsk"
+LOCALITY="Minsk"
+ORGANIZATION="FeatureMine"
+COMMONNAME="CA Provider"
+
+openssl genrsa \
+        -out $KEY \
+        2048
+
+openssl req \
+        -x509 \
+        -new \
+        -nodes \
+        -key $KEY \
+        -days 365 \
+        -out $CRT \
+        -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORGANIZATION/CN=$COMMONNAME"

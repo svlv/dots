@@ -1,20 +1,23 @@
 FROM nginx:1.12-alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir -p /data/www
-COPY index.html /data/www
 
 RUN apk update && apk add openssl
+RUN apk update && apk add bash
 
+RUN mkdir -p /data/www/conda-bld
 RUN mkdir -p /etc/nginx/ssl
+RUN mkdir -p /etc/nginx/ssl/clients
 RUN mkdir -p /etc/nginx/logs
 
-RUN mkdir -p /etc/nginx/clients
-COPY sign-certificate-request.sh /etc/nginx/clients
+COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN openssl genrsa -out /etc/nginx/ssl/ca.key 2048
-RUN openssl req -x509 -new -nodes -key /etc/nginx/ssl/ca.key -days 365 -out /etc/nginx/ssl/ca.crt -subj "/C=BY/ST=Minsk/L=Minsk/O=FeatureMine/CN=CA Provider"
+COPY create-root-ca.sh /etc/nginx/ssl/
+COPY create-key-and-csr.sh /etc/nginx/ssl/
+COPY sign-certificate-request.sh /etc/nginx/ssl/
+COPY v3.ext /etc/nginx/ssl/
 
-RUN openssl genrsa -out /etc/nginx/ssl/server.key 2048
-RUN openssl req -new -key /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.csr -subj "/C=US/ST=Utah/L=Provo/O=Company/CN=127.0.0.1"
+WORKDIR /etc/nginx/ssl/
+RUN bash create-root-ca.sh
+RUN bash create-key-and-csr.sh
+RUN bash sign-certificate-request.sh server.csr server.crt true
 
-RUN openssl x509 -req -in /etc/nginx/ssl/server.csr -CA /etc/nginx/ssl/ca.crt -CAkey /etc/nginx/ssl/ca.key -CAcreateserial -out /etc/nginx/ssl/server.crt -days 365
+ADD conda-bld /data/www/conda-bld
