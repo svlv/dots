@@ -20,17 +20,24 @@ local has_fdo, freedesktop = pcall(require, "freedesktop")
 
 -- Lain widget
 local lain = require("lain")
+local markup = lain.util.markup
+local separators = lain.util.separators
 
 local theme                     = {}
 theme.dir                       = os.getenv("HOME") .. "/.config/awesome"
-theme.font                      = "Noto Sans Regular 11"
+theme.font                      = "Monospace 11"
+theme.fg_normal                 = "#ffffff"
+theme.bg_normal                 = "#282a36"
 theme.widget_cpu                = theme.dir .. "/icons/cpu.png"
 theme.widget_mem                = theme.dir .. "/icons/mem.png"
+theme.widget_hdd                = theme.dir .. "/icons/hdd.png"
 theme.widget_clk                = theme.dir .. "/icons/clk.png"
 theme.widget_vol                = theme.dir .. "/icons/vol.png"
 theme.widget_vol_low            = theme.dir .. "/icons/vol_low.png"
 theme.widget_vol_no             = theme.dir .. "/icons/vol_no.png"
 theme.widget_vol_mute           = theme.dir .. "/icons/vol_mute.png"
+theme.col0                      = "#005b96" --"#3d1e6d" --"#7197e7"
+theme.col1                      = "#651e3e"             --"#a77ac4" 
 
 -- Override awesome.quit when we're using GNOME
 _awesome_quit = awesome.quit
@@ -157,30 +164,42 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- {{{ Wibar
-local markup = lain.util.markup
+
+-- Separators
+local arrow = separators.arrow_left
 
 -- CLK
 local clkicon = wibox.widget.imagebox(theme.widget_clk)
 local clk = awful.widget.watch(
-    "date +'%R'", 60,
-    function(widget, stdout)
-        widget:set_markup(" " .. markup.font(theme.font, stdout) .. " ")
-    end
+  "date +'%R'", 60,
+  function(widget, stdout)
+    widget:set_markup(markup.font(theme.font, " " .. stdout .. " "))
+  end
 )
+
+--CAL
+local cal = lain.widget.cal {
+  attach_to = { clk },
+  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font }
+}
 
 -- MEM
 local memicon = wibox.widget.imagebox(theme.widget_mem)
 local mem = lain.widget.mem {
+  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
-    widget:set_markup(markup.font(theme.font, " " .. mem_now.used .. "MB "))
+    local text = string.format(" %4d MB", mem_now.used)
+    widget:set_markup(markup.font(theme.font, text))
   end
 }
 
 --CPU
 local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
 local cpu = lain.widget.cpu {
-	settings = function()
-		widget:set_markup(markup.font(theme.font, " " .. cpu_now.usage .. "% "))
+  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
+  settings = function()
+    local text = string.format("%3d%% ", cpu_now.usage)
+		widget:set_markup(markup.font(theme.font, text))
 	end
 }
 
@@ -199,8 +218,8 @@ local vol = lain.widget.alsa{
         else
             volicon:set_image(theme.widget_vol)
         end
-
-        widget:set_markup(markup.font(theme.font, " " .. volume_now.level .. "% "))
+        local text = string.format("%3d%% ", volume_now.level)
+        widget:set_markup(markup.font(theme.font, text))
     end
 }
 vol.widget:buttons(awful.util.table.join(
@@ -213,6 +232,16 @@ vol.widget:buttons(awful.util.table.join(
     vol.update()
   end)
 ))
+
+-- HDD
+local hddicon = wibox.widget.imagebox(theme.widget_hdd)
+local hdd = lain.widget.fs{
+  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
+  settings = function()
+    local fsp = string.format(" %3.0f %s ", fs_now["/"].used, fs_now["/"].units)
+    widget:set_markup(markup.font(theme.font, fsp))
+  end
+}
 
 -- KEYBOARD LAYOUT
 local keybrd = awful.widget.keyboardlayout()
@@ -300,11 +329,13 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 22 })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = 22, bg = theme.bg_normal, fg = theme.fg_normal })
 
     -- Add widgets to the wibox
     local cnt = wibox.container
     local hrz = wibox.layout.align.horizontal
+    local arrw0 = arrow(theme.col0, theme.col1)
+    local arrw1 = arrow(theme.col1, theme.col0)
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
@@ -316,12 +347,15 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            cnt.background(keybrd                                                            , "#4B696D"), 
-						cnt.background(cnt.margin(wibox.widget {clkicon, clk       , layout = hrz}, 2, 3), "#005b96"),
-            cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), "#4B696D"),
-            cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), "#005b96"),
-            cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), "#4B696D"),
             wibox.widget.systray(),
+            arrow("alpha", theme.col0),
+            cnt.background(keybrd                                                            , theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {clkicon, clk       , layout = hrz}, 2, 3), theme.col1),
+            arrow(theme.col1, "alpha"),
             s.mylayoutbox,
         },
     }
@@ -419,14 +453,12 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Dmenu
-    awful.key({ modkey },            "r",     function () awful.util.spawn("dmenu_run") end,
+    awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run") end,
               {description = "run dmenu", group = "launcher"}),
-
     -- Chrome
-    awful.key({ modkey },            "b",     function () awful.util.spawn("google-chrome") end,
+    awful.key({ modkey }, "b", function () awful.util.spawn("google-chrome") end,
               {description = "run chrome", group = "applications"}),
-
-
+    -- Lua 
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
@@ -670,13 +702,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart
 awful.spawn.with_shell("compton")
 awful.spawn.with_shell("nitrogen --restore")
-
-
-
-
-
-
-
-
-
 
