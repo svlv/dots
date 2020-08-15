@@ -3,10 +3,13 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax on
 set number
+set cursorline
 set hlsearch
 set tabstop=2
 set shiftwidth=2
 set expandtab
+set mouse=a
+set autoindent
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VimPlug
@@ -16,6 +19,9 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'vim-airline/vim-airline-themes'
   Plug 'morhetz/gruvbox'
 	Plug 'mcchrish/nnn.vim'
+  Plug 'junegunn/fzf.vim'
+  Plug 'scrooloose/nerdtree'
+  Plug 'dyng/ctrlsf.vim'
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -22,7 +22,8 @@ insert_line() {
      READLINE_LINE=${1}
      READLINE_POINT=${#1}
 }
-bind -x '"\C-N": insert_line "ni -C debug \n"'
+bind -x '"\C-N": insert_line "ninja -C debug"'
+#bind -x '"\C-M": insert_line "meson test -C debug"'
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
@@ -47,7 +48,7 @@ set_bash_prompt() {
   RESET="\033[00m"
   PS1="\
 \[${COLOR1}\][\u@\h \
-\[${COLOR2}\]\W\
+\[${COLOR2}\]\w\
 \[${COLOR3}\]\$(git_branch)\
 \[${COLOR1}\]]\$\
 \[${RESET}\] " 
