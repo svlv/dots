@@ -22,8 +22,8 @@ insert_line() {
      READLINE_LINE=${1}
      READLINE_POINT=${#1}
 }
-bind -x '"\C-N": insert_line "ninja -C debug"'
-#bind -x '"\C-M": insert_line "meson test -C debug"'
+
+bind -x '"\C-N": insert_line "ninja all -j10"'
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
@@ -34,6 +34,10 @@ bind -x '"\C-N": insert_line "ninja -C debug"'
 
 git_branch() {
   branch=$(git branch 2>/dev/null | grep '^*' | colrm 1 2)
+  if [ -z "${branch}" ]; then
+    branch=$(hg branch 2>/dev/null)
+  fi
+
   if [ -z "${branch}" ]; then
     echo ""
   else
@@ -67,9 +71,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -89,6 +90,3 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="/opt/cmake-3.10.3/bin:$PATH"
-export PATH="$HOME/tools/bin:$PATH"
-export PATH="/home/asuvalov/source/ninja:$PATH"
