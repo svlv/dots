@@ -14,10 +14,6 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- Load Debian menu entries
-local debian = require("debian.menu")
-local has_fdo, freedesktop = pcall(require, "freedesktop")
-
 -- Lain widget
 local lain = require("lain")
 local markup = lain.util.markup
@@ -25,7 +21,7 @@ local separators = lain.util.separators
 
 local theme                     = {}
 theme.dir                       = os.getenv("HOME") .. "/.config/awesome"
-theme.font                      = "Monospace 11"
+theme.font                      = "Fira Code 11"
 theme.fg_normal                 = "#ffffff"
 theme.bg_normal                 = "#282a36"
 theme.widget_cpu                = theme.dir .. "/icons/cpu.png"
@@ -37,18 +33,7 @@ theme.widget_vol_low            = theme.dir .. "/icons/vol_low.png"
 theme.widget_vol_no             = theme.dir .. "/icons/vol_no.png"
 theme.widget_vol_mute           = theme.dir .. "/icons/vol_mute.png"
 theme.col0                      = "#005b96" --"#3d1e6d" --"#7197e7"
-theme.col1                      = "#651e3e"             --"#a77ac4" 
-
--- Override awesome.quit when we're using GNOME
-_awesome_quit = awesome.quit
-awesome.quit = function()
-    if os.getenv("DESKTOP_SESSION") == "awesome-gnome" then
-       os.execute("/usr/bin/gnome-session-quit") -- for Ubuntu 14.04
-       os.execute("pkill -9 gnome-session") -- I use this on Ubuntu 16.04
-    else
-    _awesome_quit()
-    end
-end
+theme.col1                      = "#651e3e"             --"#a77ac4"
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -80,8 +65,8 @@ end
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "x-terminal-emulator"
-editor = os.getenv("EDITOR") or "editor"
+terminal = "termite"
+editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -140,20 +125,18 @@ myawesomemenu = {
 local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
 local menu_terminal = { "open terminal", terminal }
 
-if has_fdo then
-    mymainmenu = freedesktop.menu.build({
-        before = { menu_awesome },
-        after =  { menu_terminal }
-    })
-else
-    mymainmenu = awful.menu({
-        items = {
-                  menu_awesome,
-                  { "Debian", debian.menu.Debian_menu.Debian },
-                  menu_terminal,
-                }
-    })
-end
+myawesomemenu = {
+    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+    { "manual", terminal .. " -e man awesome" },
+    { "edit config", editor_cmd .. " " .. awesome.conffile },
+    { "restart", awesome.restart },
+    { "quit", function() awesome.quit() end },
+ }
+
+ mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                     { "open terminal", terminal }
+                                   }
+                         })
 
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
@@ -456,7 +439,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run") end,
               {description = "run dmenu", group = "launcher"}),
     -- Chrome
-    awful.key({ modkey }, "b", function () awful.util.spawn("google-chrome") end,
+    awful.key({ modkey }, "b", function () awful.util.spawn("google-chrome-stable") end,
               {description = "run chrome", group = "applications"}),
     -- Lua 
     awful.key({ modkey }, "x",
@@ -702,4 +685,3 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart
 awful.spawn.with_shell("compton")
 awful.spawn.with_shell("nitrogen --restore")
-
