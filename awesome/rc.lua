@@ -122,8 +122,19 @@ myawesomemenu = {
    { "quit", function() awesome.quit() end}
 }
 
+local messengers = {
+    { "Zulip", "zulip", "/usr/share/icons/hicolor/16x16/apps/zulip.png"},
+    { "Telegram", "telegram-desktop", "/usr/share/icons/hicolor/16x16/apps/telegram.png"},
+    { "Skype", "skypeforlinux", "/usr/share/icons/hicolor/16x16/apps/skypeforlinux.png"},
+}
+
+local tools = {
+    { "Cisco", "/opt/cisco/anyconnect/bin/vpnui", "/opt/cisco/anyconnect/resources/vpnui256.png"},
+    { "Okular", "okular", "/usr/share/icons/hicolor/16x16/apps/okular.png"}
+}
+
 local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
-local menu_terminal = { "open terminal", terminal }
+local menu_terminal = { "Termite", terminal, "/usr/share/icons/hicolor/16x16/apps/termite.png" }
 
 myawesomemenu = {
     { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
@@ -133,8 +144,10 @@ myawesomemenu = {
     { "quit", function() awesome.quit() end },
  }
 
- mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                     { "open terminal", terminal }
+ mymainmenu = awful.menu({ items = { menu_awesome ,
+                                     { "Messengers", messengers},
+                                     { "Tools", tools},
+                                     menu_terminal,
                                    }
                          })
 
