@@ -66,8 +66,7 @@ beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "termite"
-editor = os.getenv("EDITOR") or "vim"
-editor_cmd = terminal .. " -e " .. editor
+editor = os.getenv("EDITOR") or "nvim"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -112,52 +111,48 @@ local function client_menu_toggle_fn()
 end
 -- }}}
 
+
 -- {{{ Menu
 -- Create a launcher widget and a main menu
-myawesomemenu = {
+
+awesomemenu = {
    { "hotkeys", function() return false, hotkeys_popup.show_help end},
    { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
+   { "edit config", terminal .. " -e '" .. editor .. " " ..  awesome.conffile .. "'" },
    { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end}
+   { "quit", function() awesome.quit() end},
 }
+local menu_awesome = { "awesome", awesomemenu, beautiful.awesome_icon }
 
 local messengers = {
     { "Zulip", "zulip", "/usr/share/icons/hicolor/16x16/apps/zulip.png"},
     { "Telegram", "telegram-desktop", "/usr/share/icons/hicolor/16x16/apps/telegram.png"},
     { "Skype", "skypeforlinux", "/usr/share/icons/hicolor/16x16/apps/skypeforlinux.png"},
 }
+local menu_messengers = { "Messengers", messengers}
 
 local tools = {
     { "Cisco", "/opt/cisco/anyconnect/bin/vpnui", "/opt/cisco/anyconnect/resources/vpnui256.png"},
-    { "Okular", "okular", "/usr/share/icons/hicolor/16x16/apps/okular.png"}
+    { "Okular", "okular", "/usr/share/icons/hicolor/16x16/apps/okular.png"},
 }
+local menu_tools = { "Tools", tools}
 
-local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
-local menu_terminal = { "Termite", terminal, "/usr/share/icons/hicolor/16x16/apps/termite.png" }
+local menu_terminal = { "Termite", terminal}
 
-myawesomemenu = {
-    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-    { "manual", terminal .. " -e man awesome" },
-    { "edit config", editor_cmd .. " " .. awesome.conffile },
-    { "restart", awesome.restart },
-    { "quit", function() awesome.quit() end },
- }
-
- mymainmenu = awful.menu({ items = { menu_awesome ,
-                                     { "Messengers", messengers},
-                                     { "Tools", tools},
-                                     menu_terminal,
-                                   }
-                         })
-
+mainmenu = awful.menu({ items = {
+    menu_awesome,
+    menu_messengers,
+    menu_tools,
+    menu_terminal,
+}})
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
+                                     menu = mainmenu })
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
--- }}}
+-- }}} Menu
+
 
 -- {{{ Wibar
 
@@ -173,7 +168,7 @@ local clk = awful.widget.watch(
   end
 )
 
---CAL
+-- CAL
 local cal = lain.widget.cal {
   attach_to = { clk },
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font }
@@ -189,7 +184,7 @@ local mem = lain.widget.mem {
   end
 }
 
---CPU
+-- CPU
 local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
 local cpu = lain.widget.cpu {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
@@ -319,7 +314,14 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+    s.mytaglist = awful.widget.taglist {
+        screen = s,
+        filter = awful.widget.taglist.filter.all,
+        buttons = taglist_buttons,
+        style = {
+            font = theme.font
+        },
+    }
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
@@ -336,7 +338,7 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
+            -- mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
@@ -360,7 +362,7 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+    awful.button({ }, 3, function () mainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -389,7 +391,7 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+    awful.key({ modkey,           }, "w", function () mainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
@@ -698,3 +700,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart
 awful.spawn.with_shell("compton")
 awful.spawn.with_shell("nitrogen --restore")
+
