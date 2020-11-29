@@ -241,7 +241,7 @@ local keybrd = awful.widget.keyboardlayout()
 -- CPU temperature
 local tmpicon = wibox.widget.imagebox(theme.widget_temp)
 local tmp = lain.widget.temp{
-    tempfile = "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
+    tempfile = "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input",
     timeout = 5,
     settings = function()
         local temp = string.format(" %3.0f %s", coretemp_now, "°C")
@@ -483,9 +483,19 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
 
-    awful.key({ }, "XF86AudioRaiseVolume", function () awful.util.spawn("amixer set Master 5%+"   ) end),
-    awful.key({ }, "XF86AudioLowerVolume", function () awful.util.spawn("amixer set Master 5%-"   ) end),
-    awful.key({ }, "XF86AudioMute",        function () awful.util.spawn("amixer set Master toggle") end)
+    -- Volume
+    awful.key({ }, "XF86AudioRaiseVolume", function()
+      awful.util.spawn("amixer set Master 5%+")
+      vol.update()
+    end),
+    awful.key({ }, "XF86AudioLowerVolume", function()
+      awful.util.spawn("amixer set Master 5%-")
+      vol.update()
+    end),
+    awful.key({ }, "XF86AudioMute", function()
+      awful.util.spawn("amixer set Master toggle")
+      vol.update()
+    end)
 )
 
 clientkeys = gears.table.join(
