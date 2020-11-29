@@ -32,8 +32,9 @@ theme.widget_vol                = theme.dir .. "/icons/vol.png"
 theme.widget_vol_low            = theme.dir .. "/icons/vol_low.png"
 theme.widget_vol_no             = theme.dir .. "/icons/vol_no.png"
 theme.widget_vol_mute           = theme.dir .. "/icons/vol_mute.png"
-theme.col0                      = "#005b96" --"#3d1e6d" --"#7197e7"
-theme.col1                      = "#651e3e"             --"#a77ac4"
+theme.widget_temp               = theme.dir .. "/icons/temp.png"
+theme.col0                      = "#005b96"
+theme.col1                      = "#651e3e"
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -190,8 +191,8 @@ local cpu = lain.widget.cpu {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
     local text = string.format("%3d%% ", cpu_now.usage)
-		widget:set_markup(markup.font(theme.font, text))
-	end
+        widget:set_markup(markup.font(theme.font, text))
+    end
 }
 
 -- VAL
@@ -237,6 +238,16 @@ local hdd = lain.widget.fs{
 -- KEYBOARD LAYOUT
 local keybrd = awful.widget.keyboardlayout()
 
+-- CPU temperature
+local tmpicon = wibox.widget.imagebox(theme.widget_temp)
+local tmp = lain.widget.temp{
+    tempfile = "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
+    timeout = 5,
+    settings = function()
+        local temp = string.format(" %3.0f %s", coretemp_now, "°C")
+        widget:set_markup(markup.font(theme.font, temp))
+    end
+}
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -349,11 +360,12 @@ awful.screen.connect_for_each_screen(function(s)
             arrow("alpha", theme.col0),
             cnt.background(keybrd                                                            , theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {clkicon, clk       , layout = hrz}, 2, 3), theme.col1),
-            arrow(theme.col1, "alpha"),
+            cnt.background(cnt.margin(wibox.widget {tmpicon, tmp.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {clkicon, clk       , layout = hrz}, 2, 3), theme.col0),
+            arrow(theme.col0, "alpha"),
             s.mylayoutbox,
         },
     }
