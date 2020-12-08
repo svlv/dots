@@ -14,10 +14,10 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- Lain widget
-local lain = require("lain")
-local markup = lain.util.markup
-local separators = lain.util.separators
+-- Osmium widget
+local osmium = require("osmium")
+local markup = osmium.util.markup
+local separators = osmium.util.separators
 
 local theme                     = {}
 theme.dir                       = os.getenv("HOME") .. "/.config/awesome"
@@ -170,14 +170,14 @@ local clk = awful.widget.watch(
 )
 
 -- CAL
-local cal = lain.widget.cal {
+local cal = osmium.widget.cal {
   attach_to = { clk },
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font }
 }
 
 -- MEM
 local memicon = wibox.widget.imagebox(theme.widget_mem)
-local mem = lain.widget.mem {
+local mem = osmium.widget.mem {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
     local text = string.format(" %4d MB", mem_now.used)
@@ -187,7 +187,7 @@ local mem = lain.widget.mem {
 
 -- CPU
 local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
-local cpu = lain.widget.cpu {
+local cpu = osmium.widget.cpu {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
     local text = string.format("%3d%% ", cpu_now.usage)
@@ -197,7 +197,7 @@ local cpu = lain.widget.cpu {
 
 -- VAL
 local volicon = wibox.widget.imagebox(theme.widget_vol)
-local vol = lain.widget.alsa{
+local vol = osmium.widget.alsa{
     timeout = 1,
     cmd = 'amixer -D pulse',
     settings = function()
@@ -227,7 +227,7 @@ vol.widget:buttons(awful.util.table.join(
 
 -- HDD
 local hddicon = wibox.widget.imagebox(theme.widget_hdd)
-local hdd = lain.widget.fs{
+local hdd = osmium.widget.fs{
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
     local fsp = string.format(" %3.0f %s ", fs_now["/"].used, fs_now["/"].units)
@@ -248,7 +248,7 @@ local function is_amd()
 end
 
 local tmpicon = wibox.widget.imagebox(theme.widget_temp)
-local tmp = lain.widget.temp{
+local tmp = osmium.widget.temp{
     tempfile = is_amd() and "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input" or
                             "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
     timeout = 5,
