@@ -78,19 +78,19 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.floating,
+    -- awful.layout.suit.floating,
     awful.layout.suit.tile,
     awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier,
-    awful.layout.suit.corner.nw,
+    -- awful.layout.suit.fair,
+    -- awful.layout.suit.fair.horizontal,
+    -- awful.layout.suit.spiral,
+    -- awful.layout.suit.spiral.dwindle,
+    -- awful.layout.suit.max,
+    -- awful.layout.suit.max.fullscreen,
+    -- awful.layout.suit.magnifier,
+    -- awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
@@ -239,9 +239,18 @@ local hdd = lain.widget.fs{
 local keybrd = awful.widget.keyboardlayout()
 
 -- CPU temperature
+local function is_amd()
+    local cpu_model_name_command = "cat /proc/cpuinfo | grep 'model name' | head -1 | sed -n 's/^model name\t: //p'"
+    local cpu_model_name_pipe = io.popen(cpu_model_name_command)
+    local cpu_model_name = cpu_model_name_pipe:read("*a")
+    cpu_model_name_pipe:close()
+    return string.find(cpu_model_name, "AMD") ~= nil
+end
+
 local tmpicon = wibox.widget.imagebox(theme.widget_temp)
 local tmp = lain.widget.temp{
-    tempfile = "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input",
+    tempfile = is_amd() and "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input" or
+                            "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
     timeout = 5,
     settings = function()
         local temp = string.format(" %3.0f %s", coretemp_now, "°C")
@@ -428,6 +437,8 @@ globalkeys = gears.table.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
+              {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey,           }, "KP_Enter", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
