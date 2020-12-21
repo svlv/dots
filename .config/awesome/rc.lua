@@ -35,7 +35,7 @@ theme.widget_vol_mute           = theme.dir .. "/icons/vol_mute.png"
 theme.widget_temp               = theme.dir .. "/icons/temp.png"
 theme.col0                      = "#005b96"
 theme.col1                      = "#651e3e"
-
+theme.col2                      = "2f2e2e"
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -135,6 +135,8 @@ local menu_messengers = { "Messengers", messengers}
 local tools = {
     { "Cisco", "/opt/cisco/anyconnect/bin/vpnui", "/opt/cisco/anyconnect/resources/vpnui256.png"},
     { "Okular", "okular", "/usr/share/icons/hicolor/16x16/apps/okular.png"},
+    { "Notepadqq", "notepadqq", "/usr/share/icons/hicolor/16x16/apps/notepadqq.png"},
+    { "GIMP", "gimp", "/usr/share/icons/hicolor/16x16/apps/gimp.png"}
 }
 local menu_tools = { "Tools", tools}
 
@@ -163,7 +165,7 @@ local arrow = separators.arrow_left
 -- CLK
 local clkicon = wibox.widget.imagebox(theme.widget_clk)
 local clk = awful.widget.watch(
-  "date +'%R'", 60,
+  "date +'%A, %B %d [%R]'", 60,
   function(widget, stdout)
     widget:set_markup(markup.font(theme.font, " " .. stdout .. " "))
   end
@@ -180,7 +182,7 @@ local memicon = wibox.widget.imagebox(theme.widget_mem)
 local mem = osmium.widget.mem {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
-    local text = string.format(" %4d MB", mem_now.used)
+    local text = string.format("%5d/%5d MB", mem_now.used, mem_now.total)
     widget:set_markup(markup.font(theme.font, text))
   end
 }
@@ -225,12 +227,12 @@ vol.widget:buttons(awful.util.table.join(
   end)
 ))
 
--- HDD
+-- SDD
 local hddicon = wibox.widget.imagebox(theme.widget_hdd)
 local hdd = osmium.widget.fs{
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
-    local fsp = string.format(" %3.0f %s ", fs_now["/"].used, fs_now["/"].units)
+    local fsp = string.format("%3.0f/%3.0f %s ", fs_now["/"].used, fs_now["/"].size, fs_now["/"].units)
     widget:set_markup(markup.font(theme.font, fsp))
   end
 }
@@ -354,6 +356,16 @@ awful.screen.connect_for_each_screen(function(s)
     local hrz = wibox.layout.align.horizontal
     local arrw0 = arrow(theme.col0, theme.col1)
     local arrw1 = arrow(theme.col1, theme.col0)
+    local function get_separator(number)
+        local color = theme.col3
+        if (number == 0) then
+            color = theme.col0
+        elseif (number == 1) then
+            color = theme.col1
+        end
+        return cnt.background(cnt.margin(wibox.widget {wibox.widget.separator{orientation="vertical",forced_width=5}, layout = hrz}, 2, 3), color)
+    end
+
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
@@ -373,9 +385,9 @@ awful.screen.connect_for_each_screen(function(s)
             cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {clkicon, clk       , layout = hrz}, 2, 3), theme.col0),
-            arrow(theme.col0, "alpha"),
-            s.mylayoutbox,
+            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), theme.col1)
+            --arrow(theme.col0, "alpha"),
         },
     }
 end)
@@ -479,7 +491,17 @@ globalkeys = gears.table.join(
     -- Chrome
     awful.key({ modkey }, "b", function () awful.util.spawn("google-chrome-stable") end,
               {description = "run chrome", group = "applications"}),
-    -- Lua 
+    -- Zulip
+    awful.key({ modkey }, "z", function () awful.util.spawn("zulip") end,
+              {description = "run zulip", group = "applications"}),
+    -- VS Code
+    awful.key({ modkey }, "c", function () awful.util.spawn("code") end,
+              {description = "run VS Code", group = "applications"}),
+    -- Screen capture
+    awful.key({ modkey }, "Print", function () awful.util.spawn("spectacle -a") end,
+              {description = "screen capture", group = "applications"}),
+
+    -- Lua
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
