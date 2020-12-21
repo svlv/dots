@@ -1,0 +1,3 @@
+[submodule ".config/awesome/osmium"]
+	path = .config/awesome/osmium
+	url = https://github.com/asuvalov/osmium.git
