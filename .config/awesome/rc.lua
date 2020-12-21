@@ -182,7 +182,7 @@ local memicon = wibox.widget.imagebox(theme.widget_mem)
 local mem = osmium.widget.mem {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
-    local text = string.format("%5d/%5d MB", mem_now.used, mem_now.total)
+    local text = string.format("%5d/%5d[MB]", mem_now.used, mem_now.total)
     widget:set_markup(markup.font(theme.font, text))
   end
 }
@@ -192,7 +192,7 @@ local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
 local cpu = osmium.widget.cpu {
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
-    local text = string.format("%3d%% ", cpu_now.usage)
+    local text = string.format("%3d%%", cpu_now.usage)
         widget:set_markup(markup.font(theme.font, text))
     end
 }
@@ -212,7 +212,7 @@ local vol = osmium.widget.alsa{
         else
             volicon:set_image(theme.widget_vol)
         end
-        local text = string.format("%3d%% ", volume_now.level)
+        local text = string.format("%3d%%", volume_now.level)
         widget:set_markup(markup.font(theme.font, text))
     end
 }
@@ -232,7 +232,7 @@ local hddicon = wibox.widget.imagebox(theme.widget_hdd)
 local hdd = osmium.widget.fs{
   notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
   settings = function()
-    local fsp = string.format("%3.0f/%3.0f %s ", fs_now["/"].used, fs_now["/"].size, fs_now["/"].units)
+    local fsp = string.format("%3.0f/%3.0f[%s]", fs_now["/"].used, fs_now["/"].size, fs_now["/"].units)
     widget:set_markup(markup.font(theme.font, fsp))
   end
 }
@@ -255,7 +255,7 @@ local tmp = osmium.widget.temp{
                             "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
     timeout = 5,
     settings = function()
-        local temp = string.format(" %3.0f %s", coretemp_now, "°C")
+        local temp = string.format("%3.0f%s", coretemp_now, "°C")
         widget:set_markup(markup.font(theme.font, temp))
     end
 }
