@@ -1,0 +1,5 @@
+#! /bin/bash
+
+datetime="$(date +'%A, %B %d [%R]')"
+echo "$datetime"
+

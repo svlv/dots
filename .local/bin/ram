@@ -1,0 +1,15 @@
+#! /bin/bash
+
+getLine () {
+  kiloBytes="$(cat /proc/meminfo | awk -v pat="$1" '$0 ~ pat {print $2}')"
+  echo "$((kiloBytes / 1024))"
+}
+
+total="$(getLine "^MemTotal:")"
+free="$(getLine "^MemFree:")"
+buffers="$(getLine "^Buffers:")"
+cached="$(getLine "^Cached:")"
+reclaimable="$(getLine "^SReclaimable:")"
+used="$((total - free - buffers - cached - reclaimable))"
+
+echo "$used/$total[MB]"

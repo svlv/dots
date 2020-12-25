@@ -164,8 +164,9 @@ local arrow = separators.arrow_left
 
 -- CLK
 local clkicon = wibox.widget.imagebox(theme.widget_clk)
+local clk_cmd = os.getenv("HOME") .. "/.local/bin/datetime" -- "date +'%A, %B %d [%R]'"
 local clk = awful.widget.watch(
-  "date +'%A, %B %d [%R]'", 60,
+  clk_cmd, 60,
   function(widget, stdout)
     widget:set_markup(markup.font(theme.font, " " .. stdout .. " "))
   end
@@ -241,24 +242,33 @@ local hdd = osmium.widget.fs{
 local keybrd = awful.widget.keyboardlayout()
 
 -- CPU temperature
-local function is_amd()
-    local cpu_model_name_command = "cat /proc/cpuinfo | grep 'model name' | head -1 | sed -n 's/^model name\t: //p'"
-    local cpu_model_name_pipe = io.popen(cpu_model_name_command)
-    local cpu_model_name = cpu_model_name_pipe:read("*a")
-    cpu_model_name_pipe:close()
-    return string.find(cpu_model_name, "AMD") ~= nil
-end
+
+local temp_cmd = os.getenv("HOME") .. "/.local/bin/cpu_temp" -- "date +'%A, %B %d [%R]'"
+local tmp = awful.widget.watch(
+  temp_cmd, 5,
+  function(widget, stdout)
+    widget:set_markup(markup.font(theme.font, stdout))
+  end
+)
+
+--local function is_amd()
+--    local cpu_model_name_command = "cat /proc/cpuinfo | grep 'model name' | head -1 | sed -n 's/^model name\t: //p'"
+--    local cpu_model_name_pipe = io.popen(cpu_model_name_command)
+--    local cpu_model_name = cpu_model_name_pipe:read("*a")
+--    cpu_model_name_pipe:close()
+--    return string.find(cpu_model_name, "AMD") ~= nil
+--end
 
 local tmpicon = wibox.widget.imagebox(theme.widget_temp)
-local tmp = osmium.widget.temp{
-    tempfile = is_amd() and "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input" or
-                            "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
-    timeout = 5,
-    settings = function()
-        local temp = string.format("%3.0f%s", coretemp_now, "°C")
-        widget:set_markup(markup.font(theme.font, temp))
-    end
-}
+--local tmp = osmium.widget.temp{
+--    tempfile = is_amd() and "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input" or
+--                            "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
+--    timeout = 5,
+--    settings = function()
+--        local temp = string.format("%3.0f%s", coretemp_now, "°C")
+--        widget:set_markup(markup.font(theme.font, temp))
+--    end
+--}
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -381,7 +391,7 @@ awful.screen.connect_for_each_screen(function(s)
             arrow("alpha", theme.col0),
             cnt.background(keybrd                                                            , theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {tmpicon, tmp.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {tmpicon, tmp       , layout = hrz}, 2, 3), theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
