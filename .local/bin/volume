@@ -1,0 +1,29 @@
+#! /bin/bash
+
+while getopts ":s:t" arg; do
+  case $arg in
+    s) # set
+      amixer set Master ${OPTARG} > /dev/null 2>&1
+      exit 0
+      ;;
+    t) # toggle
+      amixer set Master toggle > /dev/null 2>&1
+      exit 0
+      ;;
+  esac
+done
+
+arr=( $(amixer get Master | tail -n1 | sed 's/.*\[\([0-9]\+\)%\] \[\(.*\)\]/\1 \2/') )
+
+if [[ ${arr[1]} == "off" ]]; then
+  printf 🔇
+elif (( ${arr[0]} < 33 )); then
+  printf 🔈
+elif (( ${arr[0]} < 66 )); then
+  printf 🔉
+else
+  printf 🔊
+fi
+
+echo " ${arr[0]}%"
+

@@ -205,32 +205,38 @@ local cpu = osmium.widget.cpu {
 }
 
 -- VOL
-local volicon = wibox.widget.imagebox(theme.widget_vol)
-local vol = osmium.widget.alsa{
-    timeout = 1,
-    --cmd = 'amixer -D pulse',
-    settings = function()
-        if volume_now.status == "off" then
-            volicon:set_image(theme.widget_vol_mute)
-        elseif tonumber(volume_now.level) == 0 then
-            volicon:set_image(theme.widget_vol_no)
-        elseif tonumber(volume_now.level) <= 50 then
-            volicon:set_image(theme.widget_vol_low)
-        else
-            volicon:set_image(theme.widget_vol)
-        end
-        local text = string.format("%3d%%", volume_now.level)
-        widget:set_markup(markup.font(theme.font, text))
-    end
-}
-vol.widget:buttons(awful.util.table.join(
+--local volicon = wibox.widget.imagebox(theme.widget_vol)
+
+local vol_cmd = os.getenv("HOME") .. "/.local/bin/volume"
+local vol = awful.widget.watch(vol_cmd, 1,
+  function(widget, stdout)
+    widget:set_markup(markup.font(theme.font, stdout))
+  end
+)
+
+--local vol = osmium.widget.alsa{
+--    timeout = 1,
+--    --cmd = 'amixer -D pulse',
+--    settings = function()
+--        if volume_now.status == "off" then
+--            volicon:set_image(theme.widget_vol_mute)
+--        elseif tonumber(volume_now.level) == 0 then
+--            volicon:set_image(theme.widget_vol_no)
+--        elseif tonumber(volume_now.level) <= 50 then
+--            volicon:set_image(theme.widget_vol_low)
+--        else
+--            volicon:set_image(theme.widget_vol)
+--        end
+--        local text = string.format("%3d%%", volume_now.level)
+--        widget:set_markup(markup.font(theme.font, text))
+--    end
+--}
+vol:buttons(awful.util.table.join(
   awful.button({}, 4, function() -- scroll up
-    os.execute(string.format("%s set %s 1%%+", vol.cmd, vol.channel))
-    vol.update()
+    os.execute(vol_cmd .. " -s 1%+")
   end),
   awful.button({}, 5, function() -- scroll down
-    os.execute(string.format("%s set %s 1%%-", vol.cmd, vol.channel))
-    vol.update()
+    os.execute(vol_cmd .. " -s 1%-")
   end)
 ))
 
@@ -277,11 +283,12 @@ local keybrd = awful.widget.keyboardlayout {
 local tmp = awful.widget.watch(
   os.getenv("HOME") .. "/.local/bin/cpu_temp", 5,
   function(widget, stdout)
-    widget:set_markup(markup.font(theme.font, stdout))
+    widget:set_text(stdout)
   end,
   wibox.widget{
     valign = 'top',
-    widget = wibox.widget.textbox
+    widget = wibox.widget.textbox,
+    font = theme.font
   }
 )
 
@@ -428,7 +435,7 @@ awful.screen.connect_for_each_screen(function(s)
             cnt.background(cnt.margin(tmp, 2, 3)                                             , theme.col0), arrw0,
             cnt.background(cnt.margin(mem, 2, 3), theme.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
+            cnt.background(cnt.margin(vol, 2, 3), theme.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), theme.col1)
             --arrow(theme.col0, "alpha"),
@@ -562,16 +569,13 @@ globalkeys = gears.table.join(
 
     -- Volume
     awful.key({ }, "XF86AudioRaiseVolume", function()
-      awful.util.spawn("amixer set Master 5%+")
-      vol.update()
+      awful.util.spawn(vol_cmd .. " -s 5%+")
     end),
     awful.key({ }, "XF86AudioLowerVolume", function()
-      awful.util.spawn("amixer set Master 5%-")
-      vol.update()
+      awful.util.spawn(vol_cmd .. " -s 5%-")
     end),
     awful.key({ }, "XF86AudioMute", function()
-      awful.util.spawn("amixer set Master toggle")
-      vol.update()
+      awful.util.spawn(vol_cmd .. " -t")
     end)
 )
 
