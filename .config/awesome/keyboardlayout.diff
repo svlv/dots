@@ -1,0 +1,36 @@
+--- a/keyboardlayout.lua
++++ b/keyboardlayout.lua
+@@ -123,7 +123,11 @@
+         -- is lower by one than the group numbers reported by xkb_get_group_names.
+         local name = self._layout[self._current+1]
+         if name then
+-            text = " " .. name .. " "
++            if self.pattern then
++                text = string.format(self.pattern, name)
++            else
++                text = " " .. name .. " "
++            end
+         end
+     end
+     self.widget:set_text(text)
+@@ -254,11 +258,19 @@
+ 
+ --- Create a keyboard layout widget. It shows current keyboard layout name in a textbox.
+ -- @return A keyboard layout widget.
+-function keyboardlayout.new()
++function keyboardlayout.new(args)
++
+     local widget = textbox()
+     local self = widget_base.make_widget(widget)
+ 
+     self.widget = widget
++    if args.font then
++        self.widget.font = args.font
++    end
++
++    if args.pattern then
++        self.pattern = args.pattern
++    end
+ 
+     self.layout_name = function(v)
+         local name = v.file
