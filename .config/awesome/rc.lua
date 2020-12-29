@@ -168,7 +168,7 @@ local clk_cmd = os.getenv("HOME") .. "/.local/bin/datetime" -- "date +'%A, %B %d
 local clk = awful.widget.watch(
   clk_cmd, 60,
   function(widget, stdout)
-    widget:set_markup(markup.font(theme.font, " " .. stdout .. " "))
+    widget:set_markup(markup.font(theme.font, stdout))
   end
 )
 
@@ -180,13 +180,19 @@ local cal = osmium.widget.cal {
 
 -- MEM
 local memicon = wibox.widget.imagebox(theme.widget_mem)
-local mem = osmium.widget.mem {
-  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
-  settings = function()
-    local text = string.format("%5d/%5d[MB]", mem_now.used, mem_now.total)
-    widget:set_markup(markup.font(theme.font, text))
+--local mem = osmium.widget.mem {
+--  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
+--  settings = function()
+--    local text = string.format("%5d/%5d[MB]", mem_now.used, mem_now.total)
+--    widget:set_markup(markup.font(theme.font, text))
+--  end
+--}
+local mem = awful.widget.watch(
+  os.getenv("HOME") .. "/.local/bin/ram", 2,
+  function(widget, stdout)
+    widget:set_markup(markup.font(theme.font, stdout))
   end
-}
+)
 
 -- CPU
 local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
@@ -198,11 +204,11 @@ local cpu = osmium.widget.cpu {
     end
 }
 
--- VAL
+-- VOL
 local volicon = wibox.widget.imagebox(theme.widget_vol)
 local vol = osmium.widget.alsa{
     timeout = 1,
-    cmd = 'amixer -D pulse',
+    --cmd = 'amixer -D pulse',
     settings = function()
         if volume_now.status == "off" then
             volicon:set_image(theme.widget_vol_mute)
@@ -239,16 +245,44 @@ local hdd = osmium.widget.fs{
 }
 
 -- KEYBOARD LAYOUT
-local keybrd = awful.widget.keyboardlayout()
+local keybrd = awful.widget.keyboardlayout {
+  font = theme.font,
+  pattern = "⌨️ %s"
+}
+
+--awful.spawn.easy_async_with_shell(
+--  os.getenv("HOME") .. "/.local/bin/keyboard" .. " -n",
+--  function()
+--    keybrd.text
+--  end
+--)
+--
+--local keybrd = awful.widget.watch(
+--  os.getenv("HOME") .. "/.local/bin/keyboard", 1,
+--  function(widget, stdout)
+--    widget:set_markup(markup.font(theme.font, stdout))
+--  end,
+--  wibox.widget{
+--    valign = 'center',
+--    widget = wibox.widget.textbox
+--  }
+--)
+--keybrd:buttons(awful.util.table.join(
+--  awful.button({}, 1, function() -- scroll up
+--    os.execute(os.getenv("HOME") .. "/.local/bin/keyboard" .. " -n")
+--  end)
+--))
 
 -- CPU temperature
-
-local temp_cmd = os.getenv("HOME") .. "/.local/bin/cpu_temp" -- "date +'%A, %B %d [%R]'"
 local tmp = awful.widget.watch(
-  temp_cmd, 5,
+  os.getenv("HOME") .. "/.local/bin/cpu_temp", 5,
   function(widget, stdout)
     widget:set_markup(markup.font(theme.font, stdout))
-  end
+  end,
+  wibox.widget{
+    valign = 'top',
+    widget = wibox.widget.textbox
+  }
 )
 
 --local function is_amd()
@@ -389,10 +423,10 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
             arrow("alpha", theme.col0),
-            cnt.background(keybrd                                                            , theme.col0), arrw0,
+            cnt.background(cnt.margin(keybrd, 2, 3)                                          , theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {tmpicon, tmp       , layout = hrz}, 2, 3), theme.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {memicon, mem.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
+            cnt.background(cnt.margin(tmp, 2, 3)                                             , theme.col0), arrw0,
+            cnt.background(cnt.margin(mem, 2, 3), theme.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {volicon, vol.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), theme.col0), arrw0,

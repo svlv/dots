@@ -1,0 +1,12 @@
+#! /bin/bash
+
+while getopts "n" arg; do
+  case $arg in
+    n) # next layout
+      xkb-switch -n
+      exit 0
+  esac
+done
+
+layout=$(xkb-switch)
+echo ⌨️ $layout
