@@ -12,5 +12,5 @@ cached="$(getLine "^Cached:")"
 reclaimable="$(getLine "^SReclaimable:")"
 used="$((total - free - buffers - cached - reclaimable))"
 
-echo 🚊 $used/$total[MB]
+echo 💻 $used/$total[MB]
 
