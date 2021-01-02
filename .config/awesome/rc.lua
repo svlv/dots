@@ -331,6 +331,19 @@ local battery = awful.widget.watch(
   }
 )
 
+-- kernel
+local kernel = wibox.widget{
+  valign = 'top',
+  widget = wibox.widget.textbox
+}
+
+awful.spawn.easy_async_with_shell(os.getenv("HOME") .. "/.local/bin/kernel",
+  function(out)
+    kernel:set_markup_silently(out)
+    kernel.text = out
+  end
+)
+
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
@@ -449,8 +462,9 @@ awful.screen.connect_for_each_screen(function(s)
             cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
+            cnt.background(cnt.margin(kernel                                          , 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col0)
         },
     }
 end)
