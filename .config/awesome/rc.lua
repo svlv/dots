@@ -19,23 +19,6 @@ local osmium = require("osmium")
 local markup = osmium.util.markup
 local separators = osmium.util.separators
 
-local theme                     = {}
-theme.dir                       = os.getenv("HOME") .. "/.config/awesome"
-theme.font                      = "Fira Code 11"
-theme.fg_normal                 = "#ffffff"
-theme.bg_normal                 = "#282a36"
-theme.widget_cpu                = theme.dir .. "/icons/cpu.png"
-theme.widget_mem                = theme.dir .. "/icons/mem.png"
-theme.widget_hdd                = theme.dir .. "/icons/hdd.png"
-theme.widget_clk                = theme.dir .. "/icons/clk.png"
-theme.widget_vol                = theme.dir .. "/icons/vol.png"
-theme.widget_vol_low            = theme.dir .. "/icons/vol_low.png"
-theme.widget_vol_no             = theme.dir .. "/icons/vol_no.png"
-theme.widget_vol_mute           = theme.dir .. "/icons/vol_mute.png"
-theme.widget_temp               = theme.dir .. "/icons/temp.png"
-theme.col0                      = "#005b96"
-theme.col1                      = "#651e3e"
-theme.col2                      = "2f2e2e"
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -63,7 +46,9 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+local theme_path = string.format("%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), "default")
+
+beautiful.init(theme_path)
 
 -- This is used later as the default terminal and editor to run.
 terminal = "termite"
@@ -163,44 +148,44 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 local arrow = separators.arrow_left
 
 -- CLK
-local clkicon = wibox.widget.imagebox(theme.widget_clk)
+local clkicon = wibox.widget.imagebox(beautiful.clk_icon)
 local clk_cmd = os.getenv("HOME") .. "/.local/bin/datetime" -- "date +'%A, %B %d [%R]'"
 local clk = awful.widget.watch(
   clk_cmd, 60,
   function(widget, stdout)
-    widget:set_markup(markup.font(theme.font, stdout))
+    widget:set_markup(markup.font(beautiful.font, stdout))
   end
 )
 
 -- CAL
 local cal = osmium.widget.cal {
   attach_to = { clk },
-  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font }
+  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font }
 }
 
 -- MEM
-local memicon = wibox.widget.imagebox(theme.widget_mem)
+local memicon = wibox.widget.imagebox(beautiful.mem_icon)
 --local mem = osmium.widget.mem {
---  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
+--  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font },
 --  settings = function()
 --    local text = string.format("%5d/%5d[MB]", mem_now.used, mem_now.total)
---    widget:set_markup(markup.font(theme.font, text))
+--    widget:set_markup(markup.font(beautiful.font, text))
 --  end
 --}
 local mem = awful.widget.watch(
   os.getenv("HOME") .. "/.local/bin/ram", 2,
   function(widget, stdout)
-    widget:set_markup(markup.font(theme.font, stdout))
+    widget:set_markup(markup.font(beautiful.font, stdout))
   end
 )
 
 -- CPU
-local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
+local cpuicon = wibox.widget.imagebox(beautiful.cpu_icon)
 local cpu = osmium.widget.cpu {
-  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
+  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font },
   settings = function()
     local text = string.format("%3d%%", cpu_now.usage)
-        widget:set_markup(markup.font(theme.font, text))
+        widget:set_markup(markup.font(beautiful.font, text))
     end
 }
 
@@ -210,7 +195,7 @@ local cpu = osmium.widget.cpu {
 local vol_cmd = os.getenv("HOME") .. "/.local/bin/volume"
 local vol = awful.widget.watch(vol_cmd, 1,
   function(widget, stdout)
-    widget:set_markup(markup.font(theme.font, stdout))
+    widget:set_markup(markup.font(beautiful.font, stdout))
   end
 )
 
@@ -228,7 +213,7 @@ local vol = awful.widget.watch(vol_cmd, 1,
 --            volicon:set_image(theme.widget_vol)
 --        end
 --        local text = string.format("%3d%%", volume_now.level)
---        widget:set_markup(markup.font(theme.font, text))
+--        widget:set_markup(markup.font(beautiful.font, text))
 --    end
 --}
 vol:buttons(awful.util.table.join(
@@ -241,18 +226,18 @@ vol:buttons(awful.util.table.join(
 ))
 
 -- SDD
-local hddicon = wibox.widget.imagebox(theme.widget_hdd)
+local hddicon = wibox.widget.imagebox(beautiful.hdd_icon)
 local hdd = osmium.widget.fs{
-  notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = theme.font },
+  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font },
   settings = function()
     local fsp = string.format("%3.0f/%3.0f[%s]", fs_now["/"].used, fs_now["/"].size, fs_now["/"].units)
-    widget:set_markup(markup.font(theme.font, fsp))
+    widget:set_markup(markup.font(beautiful.font, fsp))
   end
 }
 
 -- KEYBOARD LAYOUT
 local keybrd = awful.widget.keyboardlayout {
-  font = theme.font,
+  font = beautiful.font,
   pattern = "⌨️ %s"
 }
 
@@ -266,7 +251,7 @@ local keybrd = awful.widget.keyboardlayout {
 --local keybrd = awful.widget.watch(
 --  os.getenv("HOME") .. "/.local/bin/keyboard", 1,
 --  function(widget, stdout)
---    widget:set_markup(markup.font(theme.font, stdout))
+--    widget:set_markup(markup.font(beautiful.font, stdout))
 --  end,
 --  wibox.widget{
 --    valign = 'center',
@@ -288,7 +273,7 @@ local tmp = awful.widget.watch(
   wibox.widget{
     valign = 'top',
     widget = wibox.widget.textbox,
-    font = theme.font
+    font = beautiful.font
   }
 )
 
@@ -300,14 +285,14 @@ local tmp = awful.widget.watch(
 --    return string.find(cpu_model_name, "AMD") ~= nil
 --end
 
-local tmpicon = wibox.widget.imagebox(theme.widget_temp)
+local tmpicon = wibox.widget.imagebox(beautiful.temp_icon)
 --local tmp = osmium.widget.temp{
 --    tempfile = is_amd() and "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input" or
 --                            "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
 --    timeout = 5,
 --    settings = function()
 --        local temp = string.format("%3.0f%s", coretemp_now, "°C")
---        widget:set_markup(markup.font(theme.font, temp))
+--        widget:set_markup(markup.font(beautiful.font, temp))
 --    end
 --}
 
@@ -392,7 +377,7 @@ awful.screen.connect_for_each_screen(function(s)
         filter = awful.widget.taglist.filter.all,
         buttons = taglist_buttons,
         style = {
-            font = theme.font
+            font = beautiful.font
         },
     }
 
@@ -400,22 +385,13 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 22, bg = theme.bg_normal, fg = theme.fg_normal })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = 22, bg = beautiful.bg_normal, fg = beautiful.fg_normal })
 
     -- Add widgets to the wibox
     local cnt = wibox.container
     local hrz = wibox.layout.align.horizontal
-    local arrw0 = arrow(theme.col0, theme.col1)
-    local arrw1 = arrow(theme.col1, theme.col0)
-    local function get_separator(number)
-        local color = theme.col3
-        if (number == 0) then
-            color = theme.col0
-        elseif (number == 1) then
-            color = theme.col1
-        end
-        return cnt.background(cnt.margin(wibox.widget {wibox.widget.separator{orientation="vertical",forced_width=5}, layout = hrz}, 2, 3), color)
-    end
+    local arrw0 = arrow(beautiful.col0, beautiful.col1)
+    local arrw1 = arrow(beautiful.col1, beautiful.col0)
 
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -429,16 +405,15 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
-            arrow("alpha", theme.col0),
-            cnt.background(cnt.margin(keybrd, 2, 3)                                          , theme.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(tmp, 2, 3)                                             , theme.col0), arrw0,
-            cnt.background(cnt.margin(mem, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), theme.col0), arrw0,
-            cnt.background(cnt.margin(vol, 2, 3), theme.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), theme.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), theme.col1)
-            --arrow(theme.col0, "alpha"),
+            arrow("alpha", beautiful.col0),
+            cnt.background(cnt.margin(keybrd, 2, 3)                                          , beautiful.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(tmp                                             , 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
         },
     }
 end)
@@ -806,6 +781,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- Autostart
 awful.spawn.with_shell("compton")
-awful.spawn.with_shell("nitrogen --restore")
+--awful.spawn.with_shell("nitrogen --restore")
 awful.spawn.with_shell("nm-applet")
 
