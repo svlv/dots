@@ -285,7 +285,7 @@ local tmp = awful.widget.watch(
 --    return string.find(cpu_model_name, "AMD") ~= nil
 --end
 
-local tmpicon = wibox.widget.imagebox(beautiful.temp_icon)
+-- local tmpicon = wibox.widget.imagebox(beautiful.temp_icon)
 --local tmp = osmium.widget.temp{
 --    tempfile = is_amd() and "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon2/temp2_input" or
 --                            "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
@@ -295,6 +295,41 @@ local tmpicon = wibox.widget.imagebox(beautiful.temp_icon)
 --        widget:set_markup(markup.font(beautiful.font, temp))
 --    end
 --}
+
+-- backlight
+local backlight = awful.widget.watch(
+  os.getenv("HOME") .. "/.local/bin/backlight", 1,
+  function(widget, stdout)
+    widget:set_text(stdout)
+  end,
+  wibox.widget{
+    valign = 'top',
+    widget = wibox.widget.textbox,
+    font = beautiful.font
+  }
+)
+
+backlight:buttons(awful.util.table.join(
+  awful.button({}, 4, function() -- scroll up
+    os.execute("xbacklight -inc 10")
+  end),
+  awful.button({}, 5, function() -- scroll down
+    os.execute("xbacklight -dec 10")
+  end)
+))
+
+-- backlight
+local battery = awful.widget.watch(
+  os.getenv("HOME") .. "/.local/bin/battery", 5,
+  function(widget, stdout)
+    widget:set_text(stdout)
+  end,
+  wibox.widget{
+    valign = 'top',
+    widget = wibox.widget.textbox,
+    font = beautiful.font
+  }
+)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -412,6 +447,8 @@ awful.screen.connect_for_each_screen(function(s)
             cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
         },
@@ -551,6 +588,14 @@ globalkeys = gears.table.join(
     end),
     awful.key({ }, "XF86AudioMute", function()
       awful.util.spawn(vol_cmd .. " -t")
+    end),
+
+    -- Backlight
+    awful.key({ }, "XF86MonBrightnessUp", function()
+      awful.util.spawn("xbacklight -inc 10")
+    end),
+    awful.key({ }, "XF86MonBrightnessDown", function()
+      awful.util.spawn("xbacklight -dec 10")
     end)
 )
 
