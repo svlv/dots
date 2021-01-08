@@ -10,3 +10,6 @@ alias vi='nvim'
 alias ni='ninja'
 alias me='meson'
 
+alias pi='sudo pacman -S'
+alias piu='sudo pacman -Syu'
+
