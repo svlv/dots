@@ -1,10 +1,5 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-
 # If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+[[ $- != *i* ]] && return
 
 # configure history
 HISTCONTROL=ignoreboth
@@ -29,7 +24,7 @@ bind -x '"\C-N": insert_line "ninja run_tests"'
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# returns git/mercurial branch
+# Returns git or mercurial branch
 git_branch() {
   branch=$(git branch 2>/dev/null | grep '^*' | colrm 1 2)
   if [ -z "${branch}" ]; then
@@ -43,20 +38,21 @@ git_branch() {
   fi
 }
 
-# returns prompt command
-set_bash_prompt() {
-  COLOR1="\033[38;5;14m"
-  COLOR2="\033[38;5;1m"
-  COLOR3="\033[38;5;3m"
-  RESET="\033[00m"
-  PS1="\
+COLOR1="\033[38;5;14m"
+COLOR2="\033[38;5;1m"
+COLOR3="\033[38;5;3m"
+RESET="\033[00m"
+PS1="\
 \[${COLOR1}\][\u@\h \
 \[${COLOR2}\]\w\
 \[${COLOR3}\]\$(git_branch)\
 \[${COLOR1}\]]\$\
 \[${RESET}\] "
+
+set_title() {
+  echo -ne "\033]0;${TERM}\007"
 }
-PROMPT_COMMAND=set_bash_prompt
+PROMPT_COMMAND=set_title
 
 # load aliases
 if [ -f ~/.bash_aliases ]; then
@@ -73,4 +69,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+#set -o vi # enable vi mode
 
