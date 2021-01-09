@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+sxiv -q -o -r $PWD | xargs xwallpaper --output DP-3 --stretch
+
