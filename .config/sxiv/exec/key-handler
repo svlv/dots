@@ -1,13 +1,13 @@
 #!/bin/sh
 
 _rotate() {
-    degree="90"
-    tr '\n' '\0' | xargs -0 realpath | sort | uniq | while read file; do
-    case "$(file -b -i "$file")" in
-        image/jpeg*) jpegtran -rotate "$degree" -copy all -outfile "$file" "$file" ;;
-        *)           mogrify  -rotate "$degree" "$file" ;;
-    esac
-    done
+  degree="90"
+  tr '\n' '\0' | xargs -0 realpath | sort | uniq | while read file; do
+  case "$(file -b -i "$file")" in
+      image/jpeg*) jpegtran -rotate "$degree" -copy all -outfile "$file" "$file" ;;
+      *)           mogrify  -rotate "$degree" "$file" ;;
+  esac
+  done
 }
 
 _delete() {
@@ -22,16 +22,24 @@ _print() {
   done
 }
 
-_copy() {
+_yank() {
   while read file; do
     xclip -selection clipboard -target image/png "$file"
   done
 }
 
+_set_wallpaper() {
+  monitor=$(xrandr | grep " connected" | awk '{ print$1 }')
+  while read file; do
+   xargs xwallpaper --output $monitor --stretch "$file"
+  done
+}
+
 case "$1" in
-    "p")      _print      ;;
-    "c")      _copy       ;;
-    "d")      _delete     ;;
-    "period") _rotate  90 ;;
+  "p")      _print         ;;
+  "y")      _yank          ;;
+  "d")      _delete        ;;
+  "period") _rotate  90    ;;
+  "w")      _set_wallpaper ;;
 esac
 

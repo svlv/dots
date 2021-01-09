@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-monitor=$(xrandr | grep " connected" | awk '{ print$1 }')
-sxiv -qotr $PWD | xargs xwallpaper --output $monitor --stretch
+sxiv -qtr $HOME/wallpapers
 
