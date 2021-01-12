@@ -43,10 +43,10 @@ COLOR2="\033[38;5;1m"
 COLOR3="\033[38;5;3m"
 RESET="\033[00m"
 PS1="\
-\[${COLOR1}\][\u@\h \
+\n\[${COLOR1}\][\u@\h \
 \[${COLOR2}\]\w\
 \[${COLOR3}\]\$(git_branch)\
-\[${COLOR1}\]]\$\
+\[${COLOR1}\]]\n\$\
 \[${RESET}\] "
 
 set_title() {
