@@ -27,15 +27,8 @@ bind -x '"\C-N": insert_line "ninja run_tests"'
 # Returns git or mercurial branch
 git_branch() {
   branch=$(git branch 2>/dev/null | grep '^*' | colrm 1 2)
-  if [ -z "${branch}" ]; then
-    branch=$(hg branch 2>/dev/null)
-  fi
-
-  if [ -z "${branch}" ]; then
-    echo ""
-  else
-    echo " ${branch}"
-  fi
+  [[ -z "${branch}" ]] && branch=$(hg branch 2>/dev/null)
+  [[ ! -z "${branch}" ]] && echo " ${branch}"
 }
 
 COLOR1="\033[38;5;14m"
@@ -43,21 +36,16 @@ COLOR2="\033[38;5;1m"
 COLOR3="\033[38;5;3m"
 RESET="\033[00m"
 PS1="\
-\n\[${COLOR1}\][\u@\h \
+\[${COLOR1}\][\u@\h \
 \[${COLOR2}\]\w\
 \[${COLOR3}\]\$(git_branch)\
 \[${COLOR1}\]]\n\$\
 \[${RESET}\] "
 
-set_title() {
-  echo -ne "\033]0;${TERM}\007"
-}
-PROMPT_COMMAND=set_title
+PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 
 # load aliases
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile

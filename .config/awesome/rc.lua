@@ -51,8 +51,9 @@ local theme_path = string.format("%s/.config/awesome/themes/%s/theme.lua", os.ge
 beautiful.init(theme_path)
 
 -- This is used later as the default terminal and editor to run.
-terminal = "termite"
-editor = os.getenv("EDITOR") or "nvim"
+terminal = os.getenv("TERMINAL")
+editor = os.getenv("EDITOR")
+
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -460,8 +461,8 @@ awful.screen.connect_for_each_screen(function(s)
             cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
+            --cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
+            --cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(kernel                                          , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col0)
@@ -563,7 +564,7 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Dmenu
-    awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run") end,
+    awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run", false) end,
               {description = "run dmenu", group = "launcher"}),
     -- Chrome
     awful.key({ modkey }, "b", function () awful.util.spawn("google-chrome-stable") end,

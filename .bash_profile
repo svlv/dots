@@ -1,10 +1,11 @@
-#
-# ~/.bash_profile
-#
+#!/bin/bash
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
-if [[ $(tty) == "/dev/tty1" ]]; then
-  startx
-fi
+export EDITOR="nvim"
+export TERMINAL="termite"
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+[[ $(tty) == "/dev/tty1" ]] && startx
 
