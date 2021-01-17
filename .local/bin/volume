@@ -1,29 +1,33 @@
-#! /bin/bash
+#!/bin/sh
 
 while getopts ":s:t" arg; do
   case $arg in
     s) # set
-      amixer set Master ${OPTARG} > /dev/null 2>&1
+      amixer -q set Master "${OPTARG}"
       exit 0
       ;;
     t) # toggle
-      amixer set Master toggle > /dev/null 2>&1
+      amixer -q set Master toggle
       exit 0
+      ;;
+    *)
       ;;
   esac
 done
 
-arr=( $(amixer get Master | tail -n1 | sed 's/.*\[\([0-9]\+\)%\] \[\(.*\)\]/\1 \2/') )
+value_state="$(amixer get Master | tail -n1 | sed 's/.*\[\([0-9]\+\)%\] \[\(.*\)\]/\1 \2/')"
+value=$(echo "$value_state" | awk '{print $1}')
+state=$(echo "$value_state" | awk '{print $2}')
 
-if [[ ${arr[1]} == "off" ]]; then
+if [ "$state" = "off" ]; then
   printf 🔇
-elif (( ${arr[0]} < 33 )); then
+elif [ "$value" -le 33 ]; then
   printf 🔈
-elif (( ${arr[0]} < 66 )); then
+elif [ "$value" -le 66 ]; then
   printf 🔉
 else
   printf 🔊
 fi
 
-echo " ${arr[0]}%"
+echo " ${value}%"
 
