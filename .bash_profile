@@ -4,6 +4,7 @@
 
 export EDITOR="nvim"
 export TERMINAL="termite"
+export BROWSER="google-chrome-stable"
 
 export PATH="$HOME/.cargo/bin:$PATH"
 

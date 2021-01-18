@@ -53,7 +53,7 @@ beautiful.init(theme_path)
 -- This is used later as the default terminal and editor to run.
 terminal = os.getenv("TERMINAL")
 editor = os.getenv("EDITOR")
-
+browser = os.getenv("BROWSER")
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -567,7 +567,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run", false) end,
               {description = "run dmenu", group = "launcher"}),
     -- Chrome
-    awful.key({ modkey }, "b", function () awful.util.spawn("google-chrome-stable") end,
+    awful.key({ modkey }, "b", function () awful.util.spawn(browser) end,
               {description = "run chrome", group = "applications"}),
     -- Zulip
     awful.key({ modkey }, "z", function () awful.util.spawn("zulip") end,
