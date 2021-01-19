@@ -1,0 +1,7 @@
+#!/bin/sh
+
+total=$(df --block-size=G / | awk 'NR==2{print $2}' | sed 's/\([0-9]\+\)G/\1/')
+free=$(df --block-size=G / | awk 'NR==2{print $3}' | sed 's/\([0-9]\+\)G/\1/')
+
+echo "🖴 ${free}/${total}[GB]"
+

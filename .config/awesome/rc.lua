@@ -177,7 +177,12 @@ local mem = awful.widget.watch(
   os.getenv("HOME") .. "/.local/bin/ram", 2,
   function(widget, stdout)
     widget:set_markup(markup.font(beautiful.font, stdout))
-  end
+  end,
+  wibox.widget{
+    valign = 'top',
+    widget = wibox.widget.textbox,
+    font = beautiful.font
+  }
 )
 
 -- CPU
@@ -227,14 +232,27 @@ vol:buttons(awful.util.table.join(
 ))
 
 -- SDD
-local hddicon = wibox.widget.imagebox(beautiful.hdd_icon)
-local hdd = osmium.widget.fs{
-  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font },
-  settings = function()
-    local fsp = string.format("%3.0f/%3.0f[%s]", fs_now["/"].used, fs_now["/"].size, fs_now["/"].units)
-    widget:set_markup(markup.font(beautiful.font, fsp))
-  end
-}
+--local hddicon = wibox.widget.imagebox(beautiful.hdd_icon)
+--local hdd = osmium.widget.fs{
+--  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font },
+--  settings = function()
+--    local fsp = string.format("%3.0f/%3.0f[%s]", fs_now["/"].used, fs_now["/"].size, fs_now["/"].units)
+--    widget:set_markup(markup.font(beautiful.font, fsp))
+--  end
+--}
+
+-- DISK
+local disk = awful.widget.watch(
+  os.getenv("HOME") .. "/.local/bin/disk", 5,
+  function(widget, stdout)
+    widget:set_markup(markup.font(beautiful.font, stdout))
+  end,
+  wibox.widget{
+    valign = 'top',
+    widget = wibox.widget.textbox,
+    font = beautiful.font
+  }
+)
 
 -- KEYBOARD LAYOUT
 local keybrd = awful.widget.keyboardlayout {
@@ -459,7 +477,7 @@ awful.screen.connect_for_each_screen(function(s)
             cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(tmp                                             , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {hddicon, hdd.widget, layout = hrz}, 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(disk                                            , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
             --cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
             --cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
