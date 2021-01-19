@@ -3,6 +3,7 @@ alias ll='ls -l'
 alias la='ls -la'
 
 alias rm='rm -r'
+alias cp='cp -r'
 
 alias grep='grep --color=auto'
 
@@ -12,4 +13,6 @@ alias me='meson'
 
 alias pi='sudo pacman -S'
 alias piu='sudo pacman -Syu'
+
+alias logout='pkill -KILL -u ${USER}'
 
