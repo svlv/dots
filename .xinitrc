@@ -36,5 +36,10 @@ numlockx on &
 picom &
 nm-applet &
 
-exec awesome
+session="${1:awesome}"
+case $session in
+  awesome         ) exec awesome;;
+  xmonad          ) exec xmonad;;
+  *               ) exec $session;;
+esac
 

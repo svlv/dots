@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -27,8 +29,8 @@ bind -x '"\C-N": insert_line "ninja run_tests"'
 # Returns git or mercurial branch
 git_branch() {
   branch=$(git branch 2>/dev/null | grep '^*' | colrm 1 2)
-  [[ -z "${branch}" ]] && branch=$(hg branch 2>/dev/null)
-  [[ ! -z "${branch}" ]] && echo " ${branch}"
+  [ -z "${branch}" ] && branch=$(hg branch 2>/dev/null)
+  [ ! -z "${branch}" ] && echo " ${branch}"
 }
 
 COLOR1="\033[38;5;14m"
@@ -44,8 +46,8 @@ PS1="\
 
 PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 
-# load aliases
-[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
+# Load aliases
+[ -f "${HOME}/.config/shell/aliases" ] && source "${HOME}/.config/shell/aliases"
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
