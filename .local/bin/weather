@@ -1,0 +1,39 @@
+#!/bin/sh
+
+kelvinToCelsium()
+{
+  res=$(echo "scale=0; ($1 - 273.15)/1" | bc)
+  echo "${res}°C"
+}
+
+getEmojiById()
+{
+  id=$1
+  if [ $id -ge 200 ] && [ $id -le 232 ]; then # thunderstorm
+    echo 🌩
+  elif [ $id -ge 300 ] && [ $id -le 321 ]; then # drizzle
+    echo 🌧
+  elif [ $id -ge 500 ] && [ $id -le 531 ]; then # rain
+    echo 🌧
+  elif [ $id -ge 600 ] && [ $id -le 622 ]; then # snow
+    echo ❄️
+  elif [ $id -ge 700 ] && [ $id -le 781 ]; then # atmosphere
+    echo 🌫️
+  elif [ $id -eq 800 ]; then # clear
+    echo ☀️
+  elif [ $id -ge 801 ] && [ $id -le 804 ]; then # clouds
+    echo ☁️
+  fi
+}
+
+# vars city and token are used from private environment
+
+data="$(curl -s "api.openweathermap.org/data/2.5/weather?q=${W_CITY}&appid=${W_TOKEN}")"
+temp=$(echo "$data" | jq '.main.temp')
+id=$(echo "$data" | jq '.weather[0].id')
+
+emoji=$(getEmojiById "$id")
+degree=$(kelvinToCelsium "$temp")
+
+echo "${emoji} ${degree}"
+

@@ -2,6 +2,8 @@
 
 [ -f ~/.bashrc ] && . ~/.bashrc
 
+[ -f ~/.priv_environment ] && . ~/.priv_environment
+
 export EDITOR="nvim"
 export TERMINAL="termite"
 export BROWSER="google-chrome-stable"

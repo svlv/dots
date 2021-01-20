@@ -260,6 +260,19 @@ local keybrd = awful.widget.keyboardlayout {
   pattern = "⌨️ %s"
 }
 
+-- WEATHER
+local weather = awful.widget.watch(
+  os.getenv("HOME") .. "/.local/bin/weather", 600,
+  function(widget, stdout)
+    widget:set_markup(markup.font(beautiful.font, stdout))
+  end,
+  wibox.widget{
+    --valign = 'top',
+    widget = wibox.widget.textbox,
+    font = beautiful.font
+  }
+)
+
 --awful.spawn.easy_async_with_shell(
 --  os.getenv("HOME") .. "/.local/bin/keyboard" .. " -n",
 --  function()
@@ -337,7 +350,7 @@ backlight:buttons(awful.util.table.join(
   end)
 ))
 
--- backlight
+-- battery
 local battery = awful.widget.watch(
   os.getenv("HOME") .. "/.local/bin/battery", 5,
   function(widget, stdout)
@@ -482,8 +495,9 @@ awful.screen.connect_for_each_screen(function(s)
             --cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
             --cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(kernel                                          , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col0)
+            cnt.background(cnt.margin(weather                                         , 2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
         },
     }
 end)
