@@ -15,6 +15,22 @@ local arrow = separators.arrow_left
 local arrw0 = arrow(beautiful.col0, beautiful.col1)
 local arrw1 = arrow(beautiful.col1, beautiful.col0)
 
+local function watch_widget_factory(args)
+  local bin = os.getenv("HOME") .. "/.local/bin/"
+  return awful.widget.watch(
+    bin .. args.cmd, args.timeout or 5,
+    function(widget, stdout)
+      widget:set_text(stdout)
+    end,
+    wibox.widget{
+      valign = args.valign or "center",
+      widget = wibox.widget.textbox,
+      font = beautiful.font
+    }
+  )
+end
+
+-- ram memory
 local mem = awful.widget.watch(
   os.getenv("HOME") .. "/.local/bin/ram", 2,
   function(widget, stdout)
@@ -75,44 +91,14 @@ backlight:buttons(awful.util.table.join(
   end)
 ))
 
--- CPU temperature
-local tmp = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/cpu_temp", 5,
-  function(widget, stdout)
-    widget:set_text(stdout)
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+-- cpu temperature
+local temp = watch_widget_factory{cmd = "cpu_temp", valign ='top'}
 
--- WEATHER
-local weather = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/weather", 600,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end,
-  wibox.widget{
-    --valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+-- weather
+local weather = watch_widget_factory{cmd = "weather", timeout = 600}
 
--- DISK
-local disk = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/disk", 5,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+-- disk space
+local disk = watch_widget_factory{cmd = "disk", valign = 'top'}
 
 -- KEYBOARD LAYOUT
 local keybrd = awful.widget.keyboardlayout {
@@ -145,19 +131,13 @@ local cpu = osmium.widget.cpu {
         widget:set_markup(markup.font(beautiful.font, text))
     end
 }
--- CLK
-local clkicon = wibox.widget.imagebox(beautiful.clk_icon)
-local clk_cmd = os.getenv("HOME") .. "/.local/bin/datetime"
-local clk = awful.widget.watch(
-  clk_cmd, 60,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end
-)
+
+-- date & time
+local datetime = watch_widget_factory{cmd = "datetime", timeout = 60}
 
 -- CAL
 local cal = osmium.widget.cal {
-  attach_to = { clk },
+  attach_to = { datetime },
   notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font }
 }
 
@@ -168,7 +148,7 @@ local widgets = { -- Right widgets
             arrow("alpha", beautiful.col0),
             cnt.background(cnt.margin(keybrd, 2, 3)                                          , beautiful.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(tmp                                             , 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(temp                                             , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(disk                                            , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
@@ -176,7 +156,7 @@ local widgets = { -- Right widgets
             --cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(kernel                                          , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(weather                                         , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
+            cnt.background(cnt.margin(wibox.widget {         datetime       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {args.screen.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
         }
   return widgets
