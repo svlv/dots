@@ -31,30 +31,10 @@ local function watch_widget_factory(args)
 end
 
 -- ram memory
-local mem = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/ram", 2,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+local ram = watch_widget_factory{cmd = "ram", timeout = 2, valign ='top'}
 
 -- battery
-local battery = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/battery", 5,
-  function(widget, stdout)
-    widget:set_text(stdout)
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+local battery = watch_widget_factory{cmd = "battery", valign ='top'}
 
 -- kernel
 local kernel = wibox.widget{
@@ -149,7 +129,7 @@ local widgets = { -- Right widgets
             cnt.background(cnt.margin(keybrd, 2, 3)                                          , beautiful.col0), arrw0,
             cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(temp                                             , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
+            cnt.background(cnt.margin(ram                                             , 2, 3), beautiful.col1), arrw1,
             cnt.background(cnt.margin(disk                                            , 2, 3), beautiful.col0), arrw0,
             cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
             --cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
