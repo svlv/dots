@@ -13,6 +13,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
+local bar = require("bar")
 
 -- Osmium widget
 local osmium = require("osmium")
@@ -173,17 +174,18 @@ local memicon = wibox.widget.imagebox(beautiful.mem_icon)
 --    widget:set_markup(markup.font(beautiful.font, text))
 --  end
 --}
-local mem = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/ram", 2,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+
+--local mem = awful.widget.watch(
+--  os.getenv("HOME") .. "/.local/bin/ram", 2,
+--  function(widget, stdout)
+--    widget:set_markup(markup.font(beautiful.font, stdout))
+--  end,
+--  wibox.widget{
+--    valign = 'top',
+--    widget = wibox.widget.textbox,
+--    font = beautiful.font
+--  }
+--)
 
 -- CPU
 local cpuicon = wibox.widget.imagebox(beautiful.cpu_icon)
@@ -197,14 +199,6 @@ local cpu = osmium.widget.cpu {
 
 -- VOL
 --local volicon = wibox.widget.imagebox(theme.widget_vol)
-
-local vol_cmd = os.getenv("HOME") .. "/.local/bin/volume"
-local vol = awful.widget.watch(vol_cmd, 1,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end
-)
-
 --local vol = osmium.widget.alsa{
 --    timeout = 1,
 --    --cmd = 'amixer -D pulse',
@@ -222,14 +216,6 @@ local vol = awful.widget.watch(vol_cmd, 1,
 --        widget:set_markup(markup.font(beautiful.font, text))
 --    end
 --}
-vol:buttons(awful.util.table.join(
-  awful.button({}, 4, function() -- scroll up
-    os.execute(vol_cmd .. " -s 1%+")
-  end),
-  awful.button({}, 5, function() -- scroll down
-    os.execute(vol_cmd .. " -s 1%-")
-  end)
-))
 
 -- SDD
 --local hddicon = wibox.widget.imagebox(beautiful.hdd_icon)
@@ -240,38 +226,6 @@ vol:buttons(awful.util.table.join(
 --    widget:set_markup(markup.font(beautiful.font, fsp))
 --  end
 --}
-
--- DISK
-local disk = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/disk", 5,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
-
--- KEYBOARD LAYOUT
-local keybrd = awful.widget.keyboardlayout {
-  font = beautiful.font,
-  pattern = "⌨️ %s"
-}
-
--- WEATHER
-local weather = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/weather", 600,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end,
-  wibox.widget{
-    --valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
 
 --awful.spawn.easy_async_with_shell(
 --  os.getenv("HOME") .. "/.local/bin/keyboard" .. " -n",
@@ -296,19 +250,6 @@ local weather = awful.widget.watch(
 --  end)
 --))
 
--- CPU temperature
-local tmp = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/cpu_temp", 5,
-  function(widget, stdout)
-    widget:set_text(stdout)
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
-
 --local function is_amd()
 --    local cpu_model_name_command = "cat /proc/cpuinfo | grep 'model name' | head -1 | sed -n 's/^model name\t: //p'"
 --    local cpu_model_name_pipe = io.popen(cpu_model_name_command)
@@ -327,54 +268,6 @@ local tmp = awful.widget.watch(
 --        widget:set_markup(markup.font(beautiful.font, temp))
 --    end
 --}
-
--- backlight
-local backlight = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/backlight", 1,
-  function(widget, stdout)
-    widget:set_text(stdout)
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
-
-backlight:buttons(awful.util.table.join(
-  awful.button({}, 4, function() -- scroll up
-    os.execute("xbacklight -inc 10")
-  end),
-  awful.button({}, 5, function() -- scroll down
-    os.execute("xbacklight -dec 10")
-  end)
-))
-
--- battery
-local battery = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/battery", 5,
-  function(widget, stdout)
-    widget:set_text(stdout)
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
-
--- kernel
-local kernel = wibox.widget{
-  valign = 'top',
-  widget = wibox.widget.textbox
-}
-
-awful.spawn.easy_async_with_shell(os.getenv("HOME") .. "/.local/bin/kernel",
-  function(out)
-    kernel:set_markup_silently(out)
-    kernel.text = out
-  end
-)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -468,10 +361,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox = awful.wibar({ position = "top", screen = s, height = 22, bg = beautiful.bg_normal, fg = beautiful.fg_normal })
 
     -- Add widgets to the wibox
-    local cnt = wibox.container
-    local hrz = wibox.layout.align.horizontal
-    local arrw0 = arrow(beautiful.col0, beautiful.col1)
-    local arrw1 = arrow(beautiful.col1, beautiful.col0)
+    
 
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -482,23 +372,7 @@ awful.screen.connect_for_each_screen(function(s)
             s.mypromptbox,
         },
         s.mytasklist, -- Middle widget
-        { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-            arrow("alpha", beautiful.col0),
-            cnt.background(cnt.margin(keybrd, 2, 3)                                          , beautiful.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(tmp                                             , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(mem                                             , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(disk                                            , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
-            --cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
-            --cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(kernel                                          , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(weather                                         , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {         clk       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {s.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
-        },
+        bar{screen=s},
     }
 end)
 -- }}}
