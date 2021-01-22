@@ -1,19 +1,21 @@
 local awful = require("awful")
 local wibox = require("wibox")
+
 local beautiful = require("beautiful")
 local theme_path = string.format("%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), "default")
-
 beautiful.init(theme_path)
+color0 = beautiful.col0
+color1 = beautiful.col1
+
 local osmium = require("osmium")
 local markup = osmium.util.markup
+local arrow_left = osmium.util.separators.arrow_left
 
 local cnt = wibox.container
 local hrz = wibox.layout.align.horizontal
 
-local separators = osmium.util.separators
-local arrow = separators.arrow_left
-local arrw0 = arrow(beautiful.col0, beautiful.col1)
-local arrw1 = arrow(beautiful.col1, beautiful.col0)
+local arrow0 = arrow_left(color1, color0)
+local arrow1 = arrow_left(color0, color1)
 
 local function watch_widget_factory(args)
   local bin = os.getenv("HOME") .. "/.local/bin/"
@@ -35,6 +37,18 @@ local ram = watch_widget_factory{cmd = "ram", timeout = 2, valign ='top'}
 
 -- battery
 local battery = watch_widget_factory{cmd = "battery", valign ='top'}
+
+-- cpu temperature
+local temp = watch_widget_factory{cmd = "cpu_temp", valign ='top'}
+
+-- weather
+local weather = watch_widget_factory{cmd = "weather", timeout = 600}
+
+-- disk space
+local disk = watch_widget_factory{cmd = "disk", valign = 'top'}
+
+-- date & time
+local datetime = watch_widget_factory{cmd = "datetime", timeout = 60}
 
 -- kernel
 local kernel = wibox.widget{
@@ -71,21 +85,13 @@ backlight:buttons(awful.util.table.join(
   end)
 ))
 
--- cpu temperature
-local temp = watch_widget_factory{cmd = "cpu_temp", valign ='top'}
-
--- weather
-local weather = watch_widget_factory{cmd = "weather", timeout = 600}
-
--- disk space
-local disk = watch_widget_factory{cmd = "disk", valign = 'top'}
-
 -- KEYBOARD LAYOUT
 local keybrd = awful.widget.keyboardlayout {
   font = beautiful.font,
   pattern = "⌨️ %s"
 }
 
+-- volume
 local vol_cmd = os.getenv("HOME") .. "/.local/bin/volume"
 local vol = awful.widget.watch(vol_cmd, 1,
   function(widget, stdout)
@@ -112,9 +118,6 @@ local cpu = osmium.widget.cpu {
     end
 }
 
--- date & time
-local datetime = watch_widget_factory{cmd = "datetime", timeout = 60}
-
 -- CAL
 local cal = osmium.widget.cal {
   attach_to = { datetime },
@@ -122,23 +125,34 @@ local cal = osmium.widget.cal {
 }
 
 local function factory(args)
-local widgets = { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-            arrow("alpha", beautiful.col0),
-            cnt.background(cnt.margin(keybrd, 2, 3)                                          , beautiful.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {cpuicon, cpu.widget, layout = hrz}, 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(temp                                             , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(ram                                             , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(disk                                            , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(vol,                                              2, 3), beautiful.col1), arrw1,
-            --cnt.background(cnt.margin(battery                                         , 2, 3), beautiful.col0), arrw0,
-            --cnt.background(cnt.margin(backlight                                       , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(kernel                                          , 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(weather                                         , 2, 3), beautiful.col1), arrw1,
-            cnt.background(cnt.margin(wibox.widget {         datetime       , layout = hrz}, 2, 3), beautiful.col0), arrw0,
-            cnt.background(cnt.margin(wibox.widget {args.screen.mylayoutbox      , layout = hrz}, 2, 3), beautiful.col1)
-        }
+  local widgets = {
+    layout = wibox.layout.fixed.horizontal,
+    wibox.widget.systray(),
+    arrow_left("alpha", beautiful.col0)
+  }
+
+  local function push_widget(args)
+    local isEven = (#widgets - 2) % 4 == 0
+    local arrow = isEven and arrow1 or arrow0
+    local color = isEven and color0 or beautiful.col1
+    widgets[#widgets+1] = cnt.background(cnt.margin(args.widget, 2, 3), color)
+    if not args.last then
+      widgets[#widgets+1] = arrow
+    end
+  end
+
+  push_widget({widget=keybrd})
+  push_widget({widget=wibox.widget {cpuicon, cpu.widget, layout = hrz}})
+  push_widget({widget=temp})
+  push_widget({widget=ram})
+  push_widget({widget=disk})
+  push_widget({widget=vol})
+  --push_widget({widget=battery})
+  --push_widget({widget=backlight})
+  push_widget({widget=kernel})
+  push_widget({widget=weather})
+  push_widget({widget=datetime})
+  push_widget({widget=wibox.widget{args.screen.mylayoutbox, layout = hrz}, last=true})
   return widgets
 end
 
