@@ -2,7 +2,8 @@ local awful = require("awful")
 local wibox = require("wibox")
 
 local beautiful = require("beautiful")
-local theme_path = string.format("%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), "default")
+local theme_path = string.format(
+  "%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), "default")
 beautiful.init(theme_path)
 color0 = beautiful.col0
 color1 = beautiful.col1
@@ -31,24 +32,6 @@ local function watch_widget_factory(args)
     }
   )
 end
-
--- ram memory
-local ram = watch_widget_factory{cmd = "ram", timeout = 2, valign ='top'}
-
--- battery
-local battery = watch_widget_factory{cmd = "battery", valign ='top'}
-
--- cpu temperature
-local temp = watch_widget_factory{cmd = "cpu_temp", valign ='top'}
-
--- weather
-local weather = watch_widget_factory{cmd = "weather", timeout = 600}
-
--- disk space
-local disk = watch_widget_factory{cmd = "disk", valign = 'top'}
-
--- date & time
-local datetime = watch_widget_factory{cmd = "datetime", timeout = 60}
 
 -- kernel
 local kernel = wibox.widget{
@@ -141,18 +124,20 @@ local function factory(args)
     end
   end
 
+  local create = watch_widget_factory
+
   push_widget({widget=keybrd})
   push_widget({widget=wibox.widget {cpuicon, cpu.widget, layout = hrz}})
-  push_widget({widget=temp})
-  push_widget({widget=ram})
-  push_widget({widget=disk})
+  push_widget({widget=create{cmd="cpu_temp",valign='top'}})
+  push_widget({widget=create{cmd="ram",timeout=2,valign ='top'}})
+  push_widget({widget=create{cmd="disk",valign='top'}})
   push_widget({widget=vol})
-  --push_widget({widget=battery})
-  --push_widget({widget=backlight})
+--push_widget({widget=create{cmd="battery",valign='top'}})
+--push_widget({widget=backlight})
   push_widget({widget=kernel})
-  push_widget({widget=weather})
-  push_widget({widget=datetime})
-  push_widget({widget=wibox.widget{args.screen.mylayoutbox, layout = hrz}, last=true})
+  push_widget({widget=create{cmd="weather",timeout=600}})
+  push_widget({widget=create{cmd="datetime",timeout=60}})
+  push_widget({widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true})
   return widgets
 end
 
