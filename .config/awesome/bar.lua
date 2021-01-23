@@ -81,16 +81,6 @@ vol:buttons(awful.util.table.join(
   end)
 ))
 
--- CPU
-local cpuicon = wibox.widget.imagebox(beautiful.cpu_icon)
-local cpu = osmium.widget.cpu {
-  notification_preset = { fg = beautiful.fg_normal, bg = beautiful.bg_normal, font = beautiful.font },
-  settings = function()
-    local text = string.format("%3d%%", cpu_now.usage)
-        widget:set_markup(markup.font(beautiful.font, text))
-    end
-}
-
 -- datatime with calendar
 local datetime = watch_widget_factory{cmd="datetime",timeout=60}
 osmium.widget.cal{
@@ -122,7 +112,7 @@ local function factory(args)
   local create = watch_widget_factory
 
   push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}}
-  push_widget{widget=wibox.widget {cpuicon, cpu.widget, layout = hrz}}
+  push_widget{widget=create{cmd="cpu",timeout=1}}
   push_widget{widget=create{cmd="cpu_temp",valign='top'}}
   push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
   push_widget{widget=create{cmd="disk",valign='top'}}
