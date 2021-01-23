@@ -18,7 +18,6 @@ local hrz = wibox.layout.align.horizontal
 local arrow0 = arrow_left(color1, color0)
 local arrow1 = arrow_left(color0, color1)
 
-
 local bin = os.getenv("HOME") .. "/.local/bin/"
 local function watch_widget_factory(args)
   return awful.widget.watch(
@@ -46,53 +45,39 @@ awful.spawn.easy_async_with_shell(bin .. "kernel",
   end
 )
 
--- backlight
-local backlight = awful.widget.watch(
-  os.getenv("HOME") .. "/.local/bin/backlight", 1,
-  function(widget, stdout)
-    widget:set_text(stdout)
-  end,
-  wibox.widget{
-    valign = 'top',
-    widget = wibox.widget.textbox,
-    font = beautiful.font
-  }
-)
+local function update(args)
+  awful.spawn.easy_async_with_shell(args.cmd,
+    function(out)
+      args.widget:set_text(out)
+    end)
+end
 
+-- backlight
+local backlight = watch_widget_factory{cmd="backlight",timeout=1,valign='top'}
 backlight:buttons(awful.util.table.join(
   awful.button({}, 4, function() -- scroll up
     os.execute("xbacklight -inc 10")
+    update{cmd=bin.."backlight",widget=backlight}
   end),
   awful.button({}, 5, function() -- scroll down
     os.execute("xbacklight -dec 10")
+    update{cmd=bin.."backlight",widget=backlight}
   end)
 ))
 
 -- volume
 local vol_cmd = os.getenv("HOME") .. "/.local/bin/volume"
-local vol = awful.widget.watch(vol_cmd, 1,
-  function(widget, stdout)
-    widget:set_markup(markup.font(beautiful.font, stdout))
-  end
-)
-
-local function update_volume(args)
-  awful.spawn.easy_async_with_shell(vol_cmd,
-    function(out)
-      vol:set_text(out)
-    end)
-end
-
+local vol = watch_widget_factory{cmd="volume",timeout=1}
 vol:buttons(awful.util.table.join(
   awful.button({}, 4,
   function() -- scroll up
     os.execute(vol_cmd .. " -s 1%+")
-    update_volume()
+    update{cmd=vol_cmd,widget=vol}
   end),
   awful.button({}, 5,
   function() -- scroll down
     os.execute(vol_cmd .. " -s 1%-")
-    update_volume()
+    update{cmd=vol_cmd,widget=vol}
   end)
 ))
 
@@ -136,18 +121,18 @@ local function factory(args)
 
   local create = watch_widget_factory
 
-  push_widget({widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}})
-  push_widget({widget=wibox.widget {cpuicon, cpu.widget, layout = hrz}})
-  push_widget({widget=create{cmd="cpu_temp",valign='top'}})
-  push_widget({widget=create{cmd="ram",timeout=2,valign ='top'}})
-  push_widget({widget=create{cmd="disk",valign='top'}})
-  push_widget({widget=vol})
---push_widget({widget=create{cmd="battery",valign='top'}})
---push_widget({widget=backlight})
-  push_widget({widget=kernel})
-  push_widget({widget=create{cmd="weather",timeout=600}})
-  push_widget({widget=datetime})
-  push_widget({widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true})
+  push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}}
+  push_widget{widget=wibox.widget {cpuicon, cpu.widget, layout = hrz}}
+  push_widget{widget=create{cmd="cpu_temp",valign='top'}}
+  push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
+  push_widget{widget=create{cmd="disk",valign='top'}}
+  push_widget{widget=vol}
+--push_widget{widget=create{cmd="battery",valign='top'}}
+--push_widget{widget=backlight}
+  push_widget{widget=kernel}
+  push_widget{widget=create{cmd="weather",timeout=600}}
+  push_widget{widget=datetime}
+  push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true}
   return widgets
 end
 
