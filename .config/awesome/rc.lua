@@ -13,7 +13,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
-local bar = require("bar")
+local wibar = require("wibar")
 
 -- Osmium widget
 local osmium = require("osmium")
@@ -358,11 +358,15 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 22, bg = beautiful.bg_normal, fg = beautiful.fg_normal })
+    s.mywibox = awful.wibar{
+      position = "top",
+      screen = s,
+      height = 22,
+      bg = beautiful.bg_normal,
+      fg = beautiful.fg_normal
+    }
 
     -- Add widgets to the wibox
-    
-
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
@@ -372,7 +376,7 @@ awful.screen.connect_for_each_screen(function(s)
             s.mypromptbox,
         },
         s.mytasklist, -- Middle widget
-        bar{screen=s},
+        wibar.bar{screen=s},
     }
 end)
 -- }}}
@@ -500,23 +504,28 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
 
-    -- Volume
+    -- volume
     awful.key({ }, "XF86AudioRaiseVolume", function()
-      awful.util.spawn(vol_cmd .. " -s 5%+", false)
+      awful.util.spawn(wibar.widgets.volume.cmd .. " -s 5%+", false)
+      wibar.widgets.volume.widget:emit_signal("update")
     end),
     awful.key({ }, "XF86AudioLowerVolume", function()
-      awful.util.spawn(vol_cmd .. " -s 5%-", false)
+      awful.util.spawn(wibar.widgets.volume.cmd .. " -s 5%-", false)
+      wibar.widgets.volume.widget:emit_signal("update")
     end),
     awful.key({ }, "XF86AudioMute", function()
-      awful.util.spawn(vol_cmd .. " -t", false)
+      awful.util.spawn(wibar.widgets.volume.cmd .. " -t", false)
+      wibar.widgets.volume.widget:emit_signal("update")
     end),
 
-    -- Backlight
+    -- backlight
     awful.key({ }, "XF86MonBrightnessUp", function()
       awful.util.spawn("xbacklight -inc 10", false)
+      wibar.widgets.backlight.widget:emit_signal("update")
     end),
     awful.key({ }, "XF86MonBrightnessDown", function()
       awful.util.spawn("xbacklight -dec 10", false)
+      wibar.widgets.backlight.widget:emit_signal("update")
     end)
 )
 

@@ -18,10 +18,12 @@ local hrz = wibox.layout.align.horizontal
 local arrow0 = arrow_left(color1, color0)
 local arrow1 = arrow_left(color0, color1)
 
-local bin = os.getenv("HOME") .. "/.local/bin/"
+local wibar = {}
+
+wibar.bin_dir = os.getenv("HOME") .. "/.local/bin/"
 local function watch_widget_factory(args)
   return awful.widget.watch(
-    bin .. args.cmd, args.timeout or 5,
+    wibar.bin_dir .. args.cmd, args.timeout or 5,
     function(widget, stdout)
       widget:set_text(stdout)
     end,
@@ -39,7 +41,7 @@ local kernel = wibox.widget{
   widget = wibox.widget.textbox
 }
 
-awful.spawn.easy_async_with_shell(bin .. "kernel",
+awful.spawn.easy_async_with_shell(wibar.bin_dir .. "kernel",
   function(out)
     kernel:set_text(out)
   end
@@ -52,36 +54,52 @@ local function update(args)
     end)
 end
 
+wibar.widgets = {}
+
 -- backlight
 local backlight = watch_widget_factory{cmd="backlight",timeout=1,valign='top'}
+wibar.widgets.backlight = {widget=backlight}
+backlight:connect_signal("update",
+  function()
+    update{cmd=wibar.bin_dir.."backlight",widget=backlight}
+  end
+)
 backlight:buttons(awful.util.table.join(
-  awful.button({}, 4, function() -- scroll up
+  awful.button({}, 4,
+  function() -- scroll up
     os.execute("xbacklight -inc 10")
-    update{cmd=bin.."backlight",widget=backlight}
+    backlight:emit_signal("update")
   end),
-  awful.button({}, 5, function() -- scroll down
+  awful.button({}, 5,
+  function() -- scroll down
     os.execute("xbacklight -dec 10")
-    update{cmd=bin.."backlight",widget=backlight}
+    backlight:emit_signal("update")
   end)
 ))
 
 -- volume
-local vol_cmd = os.getenv("HOME") .. "/.local/bin/volume"
 local vol = watch_widget_factory{cmd="volume",timeout=1}
+local vol_cmd = wibar.bin_dir .. "volume"
+wibar.widgets.volume = {widget=vol,cmd=vol_cmd}
+vol:connect_signal("update",
+  function()
+    update{cmd=vol_cmd,widget=vol}
+  end
+)
 vol:buttons(awful.util.table.join(
   awful.button({}, 4,
   function() -- scroll up
     os.execute(vol_cmd .. " -s 1%+")
-    update{cmd=vol_cmd,widget=vol}
+    vol:emit_signal("update")
   end),
   awful.button({}, 5,
   function() -- scroll down
     os.execute(vol_cmd .. " -s 1%-")
-    update{cmd=vol_cmd,widget=vol}
+    vol:emit_signal("update")
   end)
 ))
 
--- datatime with calendar
+-- datetime with calendar
 local datetime = watch_widget_factory{cmd="datetime",timeout=60}
 osmium.widget.cal{
   attach_to = { datetime },
@@ -92,7 +110,7 @@ osmium.widget.cal{
   }
 }
 
-local function factory(args)
+wibar.bar = function (args)
   local widgets = {
     layout = wibox.layout.fixed.horizontal,
     wibox.widget.systray(),
@@ -126,5 +144,5 @@ local function factory(args)
   return widgets
 end
 
-return factory
+return wibar
 
