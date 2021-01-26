@@ -26,16 +26,34 @@ getEmojiById()
   fi
 }
 
+getDirectionByDeg()
+{
+  deg=$1
+  [ $deg -ge 337 ] && echo "N" && return
+  [ $deg -ge 293 ] && echo "↘" && return # NW
+  [ $deg -ge 247 ] && echo "W" && return
+  [ $deg -ge 203 ] && echo "↗" && return # SW
+  [ $deg -ge 157 ] && echo "S" && return
+  [ $deg -ge 113 ] && echo "↖" && return # SE
+  [ $deg -ge 67 ] && echo "S" && return
+  [ $deg -ge 23 ] && echo "↙" && return # NE
+  echo "N"
+}
+
 # vars city and token are used from private environment
 
 data="$(curl -s "api.openweathermap.org/data/2.5/weather?q=${OW_CITY}&appid=${OW_TOKEN}")"
 [ "$1" = "get" ] && echo "$data" | jq && exit 0
 
 temp=$(echo "$data" | jq '.main.temp')
+wind=$(echo "$data" | jq '.wind.speed')
+gust=$(echo "$data" | jq '.wind.gust')
+deg=$(echo "$data" | jq '.wind.deg')
 id=$(echo "$data" | jq '.weather[0].id')
 
 emoji=$(getEmojiById "$id")
 degree=$(kelvinToCelsium "$temp")
+dir=$(getDirectionByDeg "$deg")
 
-echo "${emoji} ${degree}"
+echo "${emoji} ${degree} 💨 ${dir} ${wind}-${gust}m/s"
 
