@@ -1,0 +1,35 @@
+#!/bin/sh
+
+
+data=$(curl -s -X GET "http://dataservice.accuweather.com/currentconditions/v1/${AW_CITY}?apikey=${AW_TOKEN}")
+
+echo "$data" | jq
+
+getEmojiById () {
+  id="$1"
+  if [ $id -ge 1 ] && [ $id -le 5 ]; then # sunny
+    echo ☀️
+  elif [ $id -ge 6 ] && [ $id -le 8 ]; then # cloudy
+    echo ☁️
+  elif [ $id -eq 11 ]; then # foggy
+    echo 🌫️
+  elif [ $id -ge 12 ] && [ $id -le 14 ]; then # showers
+    echo 🌧
+  elif [ $id -ge 15 ] && [ $id -le 17 ]; then # storms
+    echo 🌩
+  elif [ $id -eq 18 ]; then # rain
+    echo 🌧
+  elif [ $id -ge 19 ] && [ $id -le 21 ]; then # flurries
+    echo 🌬️
+  elif [ $id -eq 22 ] || [ $id -eq 23 ]; then # snow
+    echo ❄️
+  fi
+}
+
+temp=$(echo "$data" | jq '.[0].Temperature.Metric.Value')
+id=$(echo "$data" | jq '.[0].WeatherIcon')
+
+emoji=$(getEmojiById "$id")
+
+echo "${emoji} ${temp}°C"
+
