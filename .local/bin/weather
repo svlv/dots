@@ -53,7 +53,9 @@ id=$(echo "$data" | jq '.weather[0].id')
 
 emoji=$(getEmojiById "$id")
 degree=$(kelvinToCelsium "$temp")
+
+[ "$gust" != "null" ] && windspeed="${wind}-${gust} m/s" || windspeed="${wind} m/s"
 dir=$(getDirectionByDeg "$deg")
 
-echo "${emoji} ${degree} 💨 ${dir} ${wind}-${gust}m/s"
+echo "${emoji} ${degree} 💨 ${dir} ${windspeed}"
 
