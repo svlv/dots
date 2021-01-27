@@ -29,15 +29,15 @@ getEmojiById()
 getDirectionByDeg()
 {
   deg=$1
-  [ $deg -ge 337 ] && echo "N" && return
+  [ $deg -ge 337 ] && echo "↓" && return # N
   [ $deg -ge 293 ] && echo "↘" && return # NW
-  [ $deg -ge 247 ] && echo "W" && return
+  [ $deg -ge 247 ] && echo "→" && return # W
   [ $deg -ge 203 ] && echo "↗" && return # SW
-  [ $deg -ge 157 ] && echo "S" && return
+  [ $deg -ge 157 ] && echo "↑" && return # S
   [ $deg -ge 113 ] && echo "↖" && return # SE
-  [ $deg -ge 67 ] && echo "S" && return
+  [ $deg -ge 67 ] && echo "←" && return # E
   [ $deg -ge 23 ] && echo "↙" && return # NE
-  echo "N"
+  echo "↓"
 }
 
 # vars city and token are used from private environment
