@@ -39,13 +39,30 @@ body {
   text-color: #ffffff;
 }
 
-h2 {
+h2,h3 {
   color: #ffffff;
   font-family: 'Fira Code';
 }
 
+#search, #dictionary {
+  height: 40px;
+  width: 50%;
+  font-family: 'Fira Code';
+  font-size: 14pt;
+}
+
 </style>
 <body>
+
+  <div class="row" align="center">
+    <h3>Search in google:</h3>
+    <input type"text" id="search">
+  </div>
+
+  <div class="row" align="center">
+    <h3>Find in dictionary:</h3>
+    <input type"text" id="dictionary">
+  </div>
 
   <div class="row">
     <div class="column">
@@ -54,7 +71,7 @@ h2 {
       <p><a href="https://suckless.org">Software that sucks less</a></p>
     </div>
     <div class="column">
-      
+
     </div>
     <div class="column">
       <h2>Useful</h2>
@@ -64,7 +81,26 @@ h2 {
       <p><a href="https://www.youtube.com/feed/subscriptions">Youtube Subscriptions</a></p>
       <p><a href="https://dictionary.cambridge.org/">Cambridge Dictionary</a></p>
     </div>
+    <div class="column">
+    </div>
   </div>
+
+<script>
+  var searchInput = document.getElementById("search");
+  searchInput.addEventListener("keydown", event => {
+    if (event.keyCode === 13) {
+      var val = searchInput.value.replaceAll("+","%2B");
+      window.open("http://google.com/search?q=" + val, "_self");
+    }
+  });
+  var dictionaryInput = document.getElementById("dictionary");
+  dictionaryInput.addEventListener("keydown", event => {
+    if (event.keyCode === 13) {
+      var val = dictionaryInput.value;
+      window.open("https://dictionary.cambridge.org/dictionary/english-russian/" + val, "_self");
+    }
+  });
+</script>
 
 </body>
 </html>
