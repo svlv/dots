@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Home Page</title>
+<title>Home</title>
 </head>
+  <link rel="shortcut icon" type="image/png" href="../home.png"/>
 <style>
 
 .column {
   float: left;
-  width: 33%;
-  text-align: center
+  width: 50%;
+  text-align: left
 }
 
 .row:after {
@@ -35,16 +36,16 @@ a:visited {
 }
 
 body {
-  background-color: #333333;
+  background-color: #2e3440;
   text-color: #ffffff;
 }
 
-h2,h3 {
+h2,h3,label {
   color: #ffffff;
   font-family: 'Fira Code';
 }
 
-#search, #dictionary {
+#search, #dictionary, #cppreference {
   height: 40px;
   width: 50%;
   font-family: 'Fira Code';
@@ -54,14 +55,29 @@ h2,h3 {
 </style>
 <body>
 
-  <div class="row" align="center">
-    <h3>Search in google:</h3>
-    <input type"text" id="search">
+  <div class="row">
+    <div class="column" style="width:70%">
+      <h3>Search in google:</h3>
+      <input type"text" id="search" style="width:80%">
+    </div> 
+    <div class="column" style="width:30%">
+      <input type="radio" id="google" name="searchtype" value="google">
+      <label for="google">Google</label><br>
+      <input type="radio" id="dict" name="searchtype" value="dict">
+      <label for="dict">Dictionary</label><br>
+      <input type="radio" id="cppref" name="searchtype" value="cppref">
+      <label for="dict">Cpp reference</label>
+    </div>
   </div>
 
   <div class="row" align="center">
     <h3>Find in dictionary:</h3>
     <input type"text" id="dictionary">
+  </div>
+
+  <div class="row" align="center">
+    <h3>Cpp reference</h3>
+    <input type"text" id="cppreference">
   </div>
 
   <div class="row">
@@ -93,13 +109,23 @@ h2,h3 {
       window.open("http://google.com/search?q=" + val, "_self");
     }
   });
-  var dictionaryInput = document.getElementById("dictionary");
+
+var dictionaryInput = document.getElementById("dictionary");
   dictionaryInput.addEventListener("keydown", event => {
     if (event.keyCode === 13) {
       var val = dictionaryInput.value;
       window.open("https://dictionary.cambridge.org/dictionary/english-russian/" + val, "_self");
     }
   });
+
+  var dictionaryInput = document.getElementById("cppreference");
+  dictionaryInput.addEventListener("keydown", event => {
+    if (event.keyCode === 13) {
+      var val = dictionaryInput.value;
+      window.open("https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=" + val, "_self");
+    }
+  });
+
 </script>
 
 </body>
