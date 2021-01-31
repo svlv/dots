@@ -9,7 +9,7 @@
 .column {
   float: left;
   width: 50%;
-  text-align: left
+  text-align: left;
 }
 
 .row:after {
@@ -57,27 +57,17 @@ h2,h3,label {
 
   <div class="row">
     <div class="column" style="width:70%">
-      <h3>Search in google:</h3>
-      <input type"text" id="search" style="width:80%">
+      <h3>Search:</h3>
+      <input type"text" id="search" style="width:95%">
     </div> 
-    <div class="column" style="width:30%">
-      <input type="radio" id="google" name="searchtype" value="google">
+    <div class="column" style="width:30%;margin-top:45px">
+      <input type="radio" id="google" name="searchtype" value="google" checked>
       <label for="google">Google</label><br>
       <input type="radio" id="dict" name="searchtype" value="dict">
       <label for="dict">Dictionary</label><br>
       <input type="radio" id="cppref" name="searchtype" value="cppref">
       <label for="dict">Cpp reference</label>
     </div>
-  </div>
-
-  <div class="row" align="center">
-    <h3>Find in dictionary:</h3>
-    <input type"text" id="dictionary">
-  </div>
-
-  <div class="row" align="center">
-    <h3>Cpp reference</h3>
-    <input type"text" id="cppreference">
   </div>
 
   <div class="row">
@@ -103,10 +93,26 @@ h2,h3,label {
 
 <script>
   var searchInput = document.getElementById("search");
+  const searchtypes = document.querySelectorAll('input[name="searchtype"]');
+
   searchInput.addEventListener("keydown", event => {
     if (event.keyCode === 13) {
-      var val = searchInput.value.replaceAll("+","%2B");
-      window.open("http://google.com/search?q=" + val, "_self");
+      let selectedType;
+      for (const searchtype of searchtypes) {
+        if (searchtype.checked) {
+          selectedType = searchtype.value;
+          break;
+        }
+      }
+      let searchValue = searchInput.value;
+      if (selectedType === "google") {
+        searchValue = searchValue.replaceAll("+", "%2B");
+        window.open("http://google.com/search?q=" + searchValue, "_self");
+      } else if (selectedType === "dict") {
+        window.open("https://dictionary.cambridge.org/dictionary/english-russian/" + searchValue, "_self");
+      } else if (selectedType === "cppref") {
+        window.open("https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=" + searchValue, "_self");
+      }
     }
   });
 
@@ -114,7 +120,6 @@ var dictionaryInput = document.getElementById("dictionary");
   dictionaryInput.addEventListener("keydown", event => {
     if (event.keyCode === 13) {
       var val = dictionaryInput.value;
-      window.open("https://dictionary.cambridge.org/dictionary/english-russian/" + val, "_self");
     }
   });
 
@@ -122,7 +127,6 @@ var dictionaryInput = document.getElementById("dictionary");
   dictionaryInput.addEventListener("keydown", event => {
     if (event.keyCode === 13) {
       var val = dictionaryInput.value;
-      window.open("https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=" + val, "_self");
     }
   });
 
