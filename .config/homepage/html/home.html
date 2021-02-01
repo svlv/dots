@@ -61,12 +61,12 @@ h2,h3,label {
       <input type"text" id="search" style="width:95%">
     </div> 
     <div class="column" style="width:30%;margin-top:45px">
-      <input type="radio" id="google" name="searchtype" value="google" checked>
+      <input type="radio" id="google" name="searchtype" value="google" checked="checked">
       <label for="google">Google</label><br>
       <input type="radio" id="dict" name="searchtype" value="dict">
       <label for="dict">Dictionary</label><br>
       <input type="radio" id="cppref" name="searchtype" value="cppref">
-      <label for="dict">Cpp reference</label>
+      <label for="cppref">Cpp reference</label>
     </div>
   </div>
 
@@ -93,6 +93,7 @@ h2,h3,label {
 
 <script>
   var searchInput = document.getElementById("search");
+  searchInput.focus();
   const searchtypes = document.querySelectorAll('input[name="searchtype"]');
 
   searchInput.addEventListener("keydown", event => {
