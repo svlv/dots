@@ -1,0 +1,21 @@
+#!/bin/bash
+
+rxDirs=/sys/class/net/[ew]*/statistics/rx_bytes
+txDirs=/sys/class/net/[ew]*/statistics/tx_bytes
+
+update() {
+  sum=0
+  for arg; do
+    read -r i < "$arg"
+    sum=$(( sum + i ))
+  done
+  cache=/tmp/${1##*/}
+  [ -f "$cache" ] && read -r old < "$cache" || old=0
+  printf %d\\n "$sum" > "$cache"
+  printf %d\\n $(( sum - old ))
+}
+
+rx=$(update $rxDirs)
+tx=$(update $txDirs)
+
+printf "🔻%4sB 🔺%4sB\\n" $(numfmt --to=iec $rx) $(numfmt --to=iec $tx)

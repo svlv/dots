@@ -139,6 +139,7 @@ wibar.bar = function (args)
 --push_widget{widget=backlight}
   push_widget{widget=kernel}
   push_widget{widget=create{cmd="weather",timeout=600}}
+  push_widget{widget=create{cmd="nettraf",timeout=1}}
   push_widget{widget=datetime}
   push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true}
   return widgets
