@@ -1,0 +1,20 @@
+#!/bin/sh
+
+get_level() {
+  level=$(awk '/^\s*w/ {
+    if ($4 >= -50)
+      print "100%";
+    else if ($4 <= -100)
+      print "0%";
+    else
+      print int(2 * ($4 + 100))
+    }' /proc/net/wireless)
+  printf %d\\n "$level"
+}
+
+case "$(cat /sys/class/net/w*/operstate 2>/dev/null)" in
+  down) printf 📡\\n ;;
+    up) printf "📶 %3d%%\\n" $(get_level) ;;
+esac
+
+
