@@ -60,5 +60,5 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#set -o vi # enable vi mode
+set -o vi # enable vi mode
 
