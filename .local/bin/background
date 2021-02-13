@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# set animated wallpaper background
+
 PIDFILE="/var/run/user/$UID/bg.pid"
 
 declare -a PIDs
