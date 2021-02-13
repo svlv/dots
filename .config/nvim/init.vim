@@ -12,6 +12,8 @@ set mouse=a
 set autoindent
 set list
 set lcs+=space:·
+set colorcolumn=80
+set textwidth=80
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VimPlug
