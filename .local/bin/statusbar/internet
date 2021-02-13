@@ -1,6 +1,6 @@
 #!/bin/sh
 
-get_level() {
+get_wifi_level() {
   level=$(awk '/^\s*w/ {
     if ($4 >= -50)
       print "100%";
@@ -12,9 +12,25 @@ get_level() {
   printf %d\\n "$level"
 }
 
-case "$(cat /sys/class/net/w*/operstate 2>/dev/null)" in
-  down) printf 📡\\n ;;
-    up) printf "📶 %3d%%\\n" $(get_level) ;;
-esac
+tunnel() {
+  case "$(cat /sys/class/net/tun*/operstate 2>/dev/null)" in
+    up) printf "🔒" ;;
+    *) printf "🔓" ;;
+  esac
+}
 
+wifi() {
+  case "$(cat /sys/class/net/w*/operstate 2>/dev/null)" in
+    down) printf 📡 ;;
+      up) printf "📶 %3d%%" $(get_wifi_level) ;;
+  esac
+}
 
+ethernet() {
+  case "$(cat /sys/class/net/e*/operstate 2>/dev/null)" in
+    down) printf "❎" ;;
+      up) printf "🌐"  ;;
+  esac
+}
+
+printf "%s %s %s\n" "$(ethernet)" "$(wifi)" "$(tunnel)"
