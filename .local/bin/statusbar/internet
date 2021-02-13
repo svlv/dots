@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Prints information about internet connection:
+# Ethernet: 🌐 (up) or ❎(down)
+# Wifi: 📶 and strength (up) or 📡 (down)
+# Tunnel: 🔒 (up) or 🔓 (down)
+
 get_wifi_level() {
   level=$(awk '/^\s*w/ {
     if ($4 >= -50)
@@ -22,7 +27,7 @@ tunnel() {
 wifi() {
   case "$(cat /sys/class/net/w*/operstate 2>/dev/null)" in
     down) printf 📡 ;;
-      up) printf "📶 %3d%%" $(get_wifi_level) ;;
+      up) printf "📶 %3d%%" "$(get_wifi_level)" ;;
   esac
 }
 
@@ -34,3 +39,4 @@ ethernet() {
 }
 
 printf "%s %s %s\n" "$(ethernet)" "$(wifi)" "$(tunnel)"
+
