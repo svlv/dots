@@ -20,7 +20,7 @@ local arrow1 = arrow_left(color0, color1)
 
 local wibar = {}
 
-wibar.bin_dir = os.getenv("HOME") .. "/.local/bin/"
+wibar.bin_dir = os.getenv("HOME") .. "/.local/bin/statusbar/"
 local function watch_widget_factory(args)
   return awful.widget.watch(
     wibar.bin_dir .. args.cmd, args.timeout or 5,
@@ -138,9 +138,10 @@ wibar.bar = function (args)
 --push_widget{widget=create{cmd="battery",valign='top'}}
 --push_widget{widget=backlight}
   push_widget{widget=kernel}
+  push_widget{widget=create{cmd="mailbox",timeout=1}}
   push_widget{widget=create{cmd="weather",timeout=600}}
-  push_widget{widget=create{cmd="nettraf",timeout=1}}
   push_widget{widget=create{cmd="internet",timeout=1}}
+  push_widget{widget=create{cmd="nettraf",timeout=1}}
   push_widget{widget=datetime}
   push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true}
   return widgets

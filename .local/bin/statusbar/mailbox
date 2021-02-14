@@ -1,0 +1,9 @@
+#!/bin/sh
+
+count() {
+  printf $(ls ~/.mail/"$1"/Inbox/new/ | wc -l)
+}
+
+mbsync -a >/dev/null 2>&1
+printf "✉ %s|%s\n" $(count work) $(count gmail)
+
