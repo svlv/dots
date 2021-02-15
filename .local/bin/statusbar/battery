@@ -1,9 +1,13 @@
-#! /bin/bash
-read STATUS PERCENTAGE < <(acpi | tr -d ',' | cut -d ' ' -f3,4)
+#! /bin/sh
 
-if [ "$STATUS" == "Charging" ]; then
-  echo "🔌 $PERCENTAGE" && exit
-elif [ "$STATUS" == "Discharging" ] || [ "$STATUS" == "Full" ]; then
-  echo -en "🔋 $PERCENTAGE" && exit
-fi
+for battery in /sys/class/power_supply/BAT?*; do
+  case "$(cat "$battery/status")" in
+    Full) status="⚡" ;;
+    Discharging) status="🔋" ;;
+    Charging) status="🔌" ;;
+    Unknown) status="♻️" ;;
+  esac
+  capacity=$(cat "$battery/capacity")
+  printf "%s %d%%" "$status" "$capacity"
+done
 
