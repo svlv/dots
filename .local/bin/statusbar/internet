@@ -18,10 +18,11 @@ get_wifi_level() {
 }
 
 tunnel() {
-  case "$(cat /sys/class/net/tun*/operstate 2>/dev/null)" in
-    up) printf "🔒" ;;
-    *) printf "🔓" ;;
-  esac
+  if [ -f /sys/class/net/*tun*/flags ]; then
+    flags=$(cat /sys/class/net/*tun*/flags)
+    [ $((( $flags & 1 ))) -eq 1 ] && printf 🔒 && return
+  fi
+  printf 🔓
 }
 
 wifi() {
