@@ -1,5 +1,19 @@
-# !/bin/bash
+#!/bin/sh
 
-value=$(xbacklight -get)
-echo ☀️ $value%
+printf ☀️
+
+if [ -d /sys/class/backlight/acpi_video0 ]; then
+  card="acpi_video0"
+elif [ -d /sys/class/backlight/intel_backlight ]; then
+  card="intel_backlight"
+else
+  printf " ?" && exit 0
+fi
+
+brightness=$(cat /sys/class/backlight/$card/brightness)
+max_brightness=$(cat /sys/class/backlight/$card/max_brightness)
+
+level=$(( brightness * 100 / max_brightness ))
+
+printf " $level%%"
 
