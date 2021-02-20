@@ -40,9 +40,9 @@ local function is_laptop()
   if not file then
     return false
   end
-  local type = file:read "*a"
+  local type = file:read()
   file:close()
-  return type == 9 or type == 10
+  return type == "9" or type == "10"
 end
 
 -- kernel
