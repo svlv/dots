@@ -41,6 +41,9 @@ getDirectionByDeg()
 }
 
 # vars city and token are used from private environment
+# if they aren't set default values will be used
+[ -z ${OW_CITY+x} ] && OW_CITY="Minsk"
+[ -z ${OW_TOKEN+x} ] && OW_TOKEN="e5b292ae2f9dae5f29e11499c2d82ece"
 
 data="$(curl -s "api.openweathermap.org/data/2.5/weather?q=${OW_CITY}&appid=${OW_TOKEN}")"
 [ "$1" = "get" ] && echo "$data" | jq && exit 0
