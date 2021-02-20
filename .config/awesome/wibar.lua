@@ -35,6 +35,16 @@ local function watch_widget_factory(args)
   )
 end
 
+local function is_laptop()
+  file = io.open("/sys/class/dmi/id/chassis_type", "r")
+  if not file then
+    return false
+  end
+  local type = file:read "*a"
+  file:close()
+  return type == 9 or type == 10
+end
+
 -- kernel
 local kernel = wibox.widget{
   valign = 'top',
@@ -135,8 +145,10 @@ wibar.bar = function (args)
   push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
   push_widget{widget=create{cmd="disk",valign='top'}}
   push_widget{widget=vol}
---push_widget{widget=create{cmd="battery",valign='top'}}
---push_widget{widget=backlight}
+  if is_laptop() then
+     push_widget{widget=create{cmd="battery",valign='top'}}
+     push_widget{widget=backlight}
+  end
   push_widget{widget=kernel}
   push_widget{widget=create{cmd="mailbox",timeout=1}}
   push_widget{widget=create{cmd="weather",timeout=600}}
