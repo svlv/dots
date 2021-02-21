@@ -362,7 +362,9 @@ globalkeys = gears.table.join(
     -- Screen capture
     awful.key({ modkey }, "Print", function () awful.util.spawn("spectacle -a") end,
               {description = "screen capture", group = "applications"}),
-
+    -- Note taker
+    awful.key({ modkey }, "n", function () awful.util.spawn("termite -e /home/tvorozhok/.local/bin/notetaker -t notetaker") end,
+              {description = "run note taker", group = "applications"}),
     -- Lua
     awful.key({ modkey }, "x",
               function ()
@@ -551,6 +553,11 @@ awful.rules.rules = {
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = false }
+    },
+
+    {
+      rule = { name = "notetaker" },
+      properties = { floating = true, x = 500, y = 300 }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
