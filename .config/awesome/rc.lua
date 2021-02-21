@@ -52,6 +52,7 @@ local theme_path = string.format("%s/.config/awesome/themes/%s/theme.lua", os.ge
 beautiful.init(theme_path)
 
 -- This is used later as the default terminal and editor to run.
+home = os.getenv("HOME")
 terminal = os.getenv("TERMINAL")
 editor = os.getenv("EDITOR")
 browser = os.getenv("BROWSER")
@@ -363,7 +364,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "Print", function () awful.util.spawn("spectacle -a") end,
               {description = "screen capture", group = "applications"}),
     -- Note taker
-    awful.key({ modkey }, "n", function () awful.util.spawn("termite -e /home/tvorozhok/.local/bin/notetaker -t notetaker") end,
+    awful.key({ modkey }, "n", function () awful.util.spawn("termite -e "..home.."/.local/bin/notetaker -t notetaker") end,
               {description = "run note taker", group = "applications"}),
     -- Lua
     awful.key({ modkey }, "x",

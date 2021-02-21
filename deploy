@@ -1,4 +1,6 @@
 #!/bin/sh
 
-ln -s $PWD/.local/bin/notetaker $HOME/.local/bin/notetaker 
+
+ln -s $PWD/.config/awesome/rc.lua $HOME/.config/awesome/rc.lua
+ln -s $PWD/.local/bin/notetaker $HOME/.local/bin/notetaker
 
