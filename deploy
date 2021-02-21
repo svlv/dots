@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ln -s $PWD/.local/bin/notetaker $HOME/.local/bin/notetaker 
+
