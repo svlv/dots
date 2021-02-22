@@ -3,6 +3,7 @@
 files=(
   .config/awesome/rc.lua
   .config/awesome/wibar.lua
+  .local/bin/statusbar
   .local/bin/notetaker
 )
 
