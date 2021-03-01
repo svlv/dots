@@ -140,6 +140,7 @@ wibar.bar = function (args)
   local create = watch_widget_factory
 
   push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}}
+  push_widget{widget=create{cmd="rate",timeout=300}}
   push_widget{widget=create{cmd="cpu",timeout=1}}
   push_widget{widget=create{cmd="cpu_temp",valign='top'}}
   push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}

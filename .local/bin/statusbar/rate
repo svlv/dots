@@ -1,0 +1,28 @@
+#!/bin/bash
+
+alfa_conf=$HOME/.config/alfadevhub/.alfadevhub
+
+[ ! -f $alfa_conf ] && exit 0
+
+token_response=$(curl -s -X POST \
+  -H "Content-type: application/x-www-form-urlencoded" \
+  "https://developerhub.alfabank.by:8273/token" \
+  -d @"${alfa_conf}")
+
+access_token=$(echo "$token_response" | jq -r .access_token)
+refresh_token=$(echo "$token_response" | jq -r .refresh_token)
+token_type=$(echo "$token_response" | jq -r .token_type)
+expires_in=$(echo "$token_response" | jq -r .expires_in)
+#echo $token_response
+
+rates_response=$(curl -s --location -X GET \
+  -H "Accept: application/json" \
+  -H "Authorization: ${token_type} ${access_token}" \
+  -H 'Content-Type: application/json' \
+  "https://developerhub.alfabank.by:8273/partner/1.0.2/currency/rates")
+#echo $rates_response
+
+USD_BYN_rate=$(echo ${rates_response} | jq .rates[0].rate)
+
+echo "USD/BYN ${USD_BYN_rate}"
+
