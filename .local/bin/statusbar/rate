@@ -25,5 +25,7 @@ rates_response=$(curl -s --location -X GET \
 USD_BYN_rate=$(echo ${rates_response} | jq .rates[0].rate)
 BYN_USD_rate=$($HOME/.local/bin/statusbar/rate.py)
 diff=$(python -c "print(round((1-${USD_BYN_rate}/${BYN_USD_rate})*1000,2))")
+
+[ $(echo "$diff < 10" | bc -l) -eq 1 ] && notify-send -u normal -t 5000 "Expected rate"
 echo "${USD_BYN_rate}/${BYN_USD_rate} (${diff}\$)"
 
