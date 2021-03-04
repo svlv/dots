@@ -1,0 +1,4 @@
+#!/bin/sh
+
+upt=$(uptime -p | sed -e 's/up //g' -e 's/ minutes/m/g' -e 's/ minute/m/g' -e 's/ hours/h/g' -e 's/ hour/h/g')
+echo "🕒 $upt"
