@@ -11,7 +11,9 @@ export EDITOR="nvim"
 export TERMINAL="termite"
 export BROWSER="brave"
 export WM="awesome"
+export MANPAGER="nvim -c 'set ft=man' -"
 
+export PATH="$HOME/.local/bin/statusbar:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
