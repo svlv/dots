@@ -366,6 +366,9 @@ globalkeys = gears.table.join(
     -- Note taker
     awful.key({ modkey }, "n", function () awful.util.spawn("termite -e "..home.."/.local/bin/notetaker -t notetaker") end,
               {description = "run note taker", group = "applications"}),
+    -- Notes
+    awful.key({ modkey }, "e", function () awful.util.spawn("termite -e \"" .. editor .. " " .. home .. "/English/notes\" -t engnote") end),
+
     -- Lua
     awful.key({ modkey }, "x",
               function ()
@@ -558,9 +561,19 @@ awful.rules.rules = {
 
     {
       rule = { name = "notetaker" },
-      properties = { floating = true, x = 500, y = 300 }
+      properties = {
+        floating = true,
+        placement = awful.placement.centered
+      }
     },
 
+    {
+      rule = { name = "engnote" },
+      properties = {
+        floating = true,
+        placement = awful.placement.centered,
+      }
+    },
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },

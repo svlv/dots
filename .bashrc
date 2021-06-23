@@ -15,16 +15,12 @@ shopt -s histappend
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# sets readline variables
+# Sets readline variables
 insert_line() {
      READLINE_LINE=${1}
      READLINE_POINT=${#1}
 }
-bind -x '"\C-N": insert_line "ninja run_tests"'
-
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+bind '"\C-N":"ninja\C-m"'
 
 # Returns git or mercurial branch
 git_branch() {
@@ -33,12 +29,21 @@ git_branch() {
   [ ! -z "${branch}" ] && echo " ${branch}"
 }
 
+# Returns the current time
+get_time() {
+  time=$(date +'%R')
+  echo $time
+}
+
 COLOR1="\033[38;5;14m"
 COLOR2="\033[38;5;1m"
 COLOR3="\033[38;5;3m"
+COLOR4="\033[38;5;13m"
 RESET="\033[00m"
 PS1="\
-\[${COLOR1}\][\u@\h \
+\[${COLOR1}\][\
+\[${COLOR4}\]\$(get_time) \
+\[${COLOR1}\]\u@\h \
 \[${COLOR2}\]\w\
 \[${COLOR3}\]\$(git_branch)\
 \[${COLOR1}\]]\n\$\
@@ -49,16 +54,9 @@ PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 # Load aliases
 [ -f "${HOME}/.config/shell/aliases" ] && source "${HOME}/.config/shell/aliases"
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+# Load fzf completion
+[ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
+[ -f "/usr/share/fzf/key-bindings.bash" ] && source /usr/share/fzf/key-bindings.bash
 
-set -o vi # enable vi mode
+set -o emacs # enable vi mode
 
