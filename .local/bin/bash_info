@@ -1,0 +1,29 @@
+#!/bin/bash
+
+get_ppid() {
+  ps -p $1 -o ppid=
+}
+
+get_cmd() {
+  ps -p $1 -o cmd=
+}
+
+count=0
+ppid=$(get_ppid $$)
+cmd=$(get_cmd $ppid)
+
+if [ ${1:-""} = "count" ]; then
+  while [ $cmd != "termite" ]; do
+    count=$((count+1))
+    ppid=$(get_ppid $ppid)
+    cmd=$(get_cmd $ppid)
+  done
+  echo $count
+elif [ ${1:-""} = "parents" ]; then
+  while [ $cmd != "termite" ]; do
+    ppid=$(get_ppid $ppid)
+    cmd=$(get_cmd $ppid)
+    echo $(ps -hp $ppid)
+  done
+fi
+

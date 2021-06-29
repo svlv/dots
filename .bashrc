@@ -39,9 +39,11 @@ COLOR1="\033[38;5;14m"
 COLOR2="\033[38;5;1m"
 COLOR3="\033[38;5;3m"
 COLOR4="\033[38;5;13m"
+COLOR5="\033[38;5;12m"
 RESET="\033[00m"
 PS1="\
 \[${COLOR1}\][\
+\[${COLOR5}\]\$(bash_info count) \
 \[${COLOR4}\]\$(get_time) \
 \[${COLOR1}\]\u@\h \
 \[${COLOR2}\]\w\

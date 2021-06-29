@@ -14,7 +14,7 @@ export BROWSER="brave"
 export WM="awesome"
 export MANPAGER="nvim -c 'set ft=man' -"
 
-export NNN_BMS="d:$HOME/Documents;D:$HOME/Downloads"
+export NNN_BMS="d:$HOME/Documents;D:$HOME/Downloads;m:/mnt"
 export NNN_TMPFILE=$HOME/.config/nnn/.lastd
 
 export PATH="$HOME/.local/bin/statusbar:$PATH"
