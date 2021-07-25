@@ -143,8 +143,8 @@ wibar.bar = function (args)
 --push_widget{widget=create{cmd="upt",timeout=60}}
   push_widget{widget=create{cmd="rate",timeout=60}}
 --push_widget{widget=create{cmd="cpu",timeout=1}}
---push_widget{widget=create{cmd="cpu_temp",valign='top'}}
---push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
+  push_widget{widget=create{cmd="cpu_temp",valign='top'}}
+  push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
 --push_widget{widget=create{cmd="disk",valign='top'}}
   push_widget{widget=vol}
   if is_laptop() then

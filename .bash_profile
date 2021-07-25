@@ -9,7 +9,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 export EDITOR="nvim"
-export TERMINAL="termite"
+export TERMINAL="alacritty"
 export BROWSER="brave"
 export WM="awesome"
 export MANPAGER="nvim -c 'set ft=man' -"
