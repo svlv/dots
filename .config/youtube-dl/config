@@ -1,0 +1,3 @@
+--ignore-errors
+-o ~/Videos/%(title)s.%(ext)s
+-f best
