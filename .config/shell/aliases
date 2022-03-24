@@ -1,10 +1,15 @@
 #!/bin/sh
 
-alias ls="ls --color=auto"
+# Compatibility for GNU and *BSD/Darwin
+ls --color=auto &> /dev/null && alias ls="ls --color=auto" || alias ls="ls -G"
 alias ll="ls -l"
 alias la="ls -la"
 
-alias rm="rm -r"
+rm() {
+  print -c $@
+}
+
+#alias rm="rm -ir"
 alias cp="cp -r"
 
 alias grep="grep --color=auto"
@@ -16,5 +21,5 @@ alias me="meson"
 alias pi="sudo pacman -S"
 alias piu="sudo pacman -Syu"
 
-alias logout="loginctl terminate-session $(loginctl session-status | awk 'NR==1{print $1}')"
+#alias logout="loginctl terminate-session $(loginctl session-status | awk 'NR==1{print $1}')"
 
