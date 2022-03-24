@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Returns git or mercurial branch
+git_branch() {
+  branch=$(git branch 2>/dev/null | grep '^*' | colrm 1 2)
+  [ -z "${branch}" ] && branch=$(hg branch 2>/dev/null)
+  [ ! -z "${branch}" ] && echo " ${branch}"
+}
+
+# Returns the current time
+get_time() {
+  time=$(date +'%R')
+  echo $time
+}
+

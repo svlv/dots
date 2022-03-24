@@ -3,6 +3,12 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# Load aliases
+[ -f "${HOME}/.config/shell/aliases" ] && source "${HOME}/.config/shell/aliases"
+
+# Load utils
+[ -f "${HOME}/.config/shell/utils" ] && source "${HOME}/.config/shell/utils"
+
 # configure history
 HISTCONTROL=ignoreboth
 HISTSIZE=1000
@@ -22,19 +28,6 @@ insert_line() {
 }
 bind '"\C-N":"ninja\C-m"'
 
-# Returns git or mercurial branch
-git_branch() {
-  branch=$(git branch 2>/dev/null | grep '^*' | colrm 1 2)
-  [ -z "${branch}" ] && branch=$(hg branch 2>/dev/null)
-  [ ! -z "${branch}" ] && echo " ${branch}"
-}
-
-# Returns the current time
-get_time() {
-  time=$(date +'%R')
-  echo $time
-}
-
 COLOR1="\033[38;5;14m"
 COLOR2="\033[38;5;1m"
 COLOR3="\033[38;5;3m"
@@ -51,8 +44,6 @@ PS1="\
 
 PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 
-# Load aliases
-[ -f "${HOME}/.config/shell/aliases" ] && source "${HOME}/.config/shell/aliases"
 
 # Load fzf completion
 [ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
