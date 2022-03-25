@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#[[ -f $HOME/.config/shell/utils ]] && . $HOME/.config/shell/utils
+#[[ -f $HOME/.config/shell/aliases ]] && . $HOME/.config/shell/aliases
+
 [ -f ~/.bashrc ] && . ~/.bashrc
 
 [ -f ~/.priv_environment ] && . ~/.priv_environment
@@ -10,7 +13,7 @@ export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 export EDITOR="nvim"
 export TERMINAL="alacritty"
-export BROWSER="brave"
+export BROWSER="google-chrome-stable"
 export WM="awesome"
 export MANPAGER="nvim -c 'set ft=man' -"
 
