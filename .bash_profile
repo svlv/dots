@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#[[ -f $HOME/.config/shell/utils ]] && . $HOME/.config/shell/utils
-#[[ -f $HOME/.config/shell/aliases ]] && . $HOME/.config/shell/aliases
-
 [ -f ~/.bashrc ] && . ~/.bashrc
 
 [ -f ~/.priv_environment ] && . ~/.priv_environment
