@@ -44,7 +44,6 @@ PS1="\
 
 PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 
-
 # Load fzf completion
 [ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
 [ -f "/usr/share/fzf/key-bindings.bash" ] && source /usr/share/fzf/key-bindings.bash

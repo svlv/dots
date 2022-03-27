@@ -5,11 +5,7 @@ ls --color=auto &> /dev/null && alias ls="ls --color=auto" || alias ls="ls -G"
 alias ll="ls -l"
 alias la="ls -la"
 
-rm() {
-  print -c $@
-}
-
-#alias rm="rm -ir"
+alias rm="rm -Ir"
 alias cp="cp -r"
 
 alias grep="grep --color=auto"
@@ -21,5 +17,5 @@ alias me="meson"
 alias pi="sudo pacman -S"
 alias piu="sudo pacman -Syu"
 
-#alias logout="loginctl terminate-session $(loginctl session-status | awk 'NR==1{print $1}')"
+alias logout="loginctl terminate-session $(loginctl session-status | awk 'NR==1{print $1}')"
 
