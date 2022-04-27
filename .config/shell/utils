@@ -13,3 +13,8 @@ get_time() {
   echo $time
 }
 
+# Sources the given file if one exists
+source_if_exists() {
+  [ -f ${1} ] && source ${1}
+}
+
