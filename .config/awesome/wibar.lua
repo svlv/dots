@@ -140,10 +140,10 @@ wibar.bar = function (args)
   local create = watch_widget_factory
 
   push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}}
---push_widget{widget=create{cmd="upt",timeout=60}}
-  push_widget{widget=create{cmd="rate",timeout=60}}
+  push_widget{widget=create{cmd="upt",timeout=60}}
+--push_widget{widget=create{cmd="rate",timeout=60}}
 --push_widget{widget=create{cmd="cpu",timeout=1}}
-  push_widget{widget=create{cmd="cpu_temp",valign='top'}}
+--push_widget{widget=create{cmd="cpu_temp",valign='top'}}
   push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
 --push_widget{widget=create{cmd="disk",valign='top'}}
   push_widget{widget=vol}
@@ -153,7 +153,7 @@ wibar.bar = function (args)
   end
 --push_widget{widget=kernel}
   push_widget{widget=create{cmd="mailbox",timeout=1}}
-  push_widget{widget=create{cmd="atmos-line",timeout=600}}
+  push_widget{widget=create{cmd="atmos-line --get-current-weather --lat 52.27 --lon 20.91",timeout=600}}
   push_widget{widget=create{cmd="internet",timeout=1}}
   push_widget{widget=create{cmd="nettraf",timeout=1}}
   push_widget{widget=datetime}

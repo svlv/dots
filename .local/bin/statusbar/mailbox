@@ -5,5 +5,5 @@ count() {
 }
 
 mbsync -a >/dev/null 2>&1
-printf "✉ %s|%s\n" $(count work) $(count gmail)
+printf "✉ %s\n" $(count gmail)
 

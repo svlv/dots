@@ -3,7 +3,7 @@
 cpuModel="$(cat /proc/cpuinfo | grep 'model name' | head -1 | sed -n 's/^model name\t: //p')"
 
 if [[ "$cpuModel" =~ .*"AMD Ryzen".* ]]; then # for AMD Ryzen processors
-  echo 🌡 $(sensors k10temp-pci-00c3 | sed -n 's/^Tdie:\s*+\([0-9]\+\).*/\1/p')°C
+  echo 🌡 $(sensors k10temp-pci-00c3 | sed -n 's/^Tctl:\s*+\([0-9]\+\).*/\1/p')°C
 elif [[ "$cpuModel" =~ .*"Intel".* ]];  then  # for Intel Core processors
   echo 🌡 $(sensors coretemp-isa-0000 | sed -n 's/^Package id 0:\s*+\([0-9]\+\).*/\1/p')°C
 elif [[ "$cpuModel" =~ .*"ARMv7".* ]]; then   # for Raspberry Pi 3B+

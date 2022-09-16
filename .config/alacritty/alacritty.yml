@@ -65,5 +65,8 @@ font:
     style: Bold Italic
   size: 11
 
+window:
+  opacity: 0.7
+
 key_bindings:
   - { key: Return,   mods: Control|Shift, action: SpawnNewInstance }
