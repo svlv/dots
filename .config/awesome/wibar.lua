@@ -9,7 +9,6 @@ color0 = beautiful.col0
 color1 = beautiful.col1
 
 local osmium = require("osmium")
-local markup = osmium.util.markup
 local arrow_left = osmium.util.separators.arrow_left
 
 local cnt = wibox.container
@@ -153,7 +152,7 @@ wibar.bar = function (args)
   end
 --push_widget{widget=kernel}
   push_widget{widget=create{cmd="mailbox",timeout=1}}
-  push_widget{widget=create{cmd="atmos-line --get-current-weather --lat 52.27 --lon 20.91",timeout=600}}
+  push_widget{widget=create{cmd="atmos-line --get-current-weather",timeout=600}}
   push_widget{widget=create{cmd="internet",timeout=1}}
   push_widget{widget=create{cmd="nettraf",timeout=1}}
   push_widget{widget=datetime}
