@@ -42,7 +42,7 @@ install: \
 	${HOME}/.bash_profile \
 	${HOME}/.xinitrc \
 	${HOME}/.Xresources \
-	${awesole_dir} \
+	${awesome_dir} \
 	${awesome_dir}/rc.lua \
 	${awesome_dir}/wibar.lua \
 	${awesome_dir}/osmium \
