@@ -1,8 +1,8 @@
 return require('packer').startup(function()
+    use { "wbthomason/packer.nvim" }
     use { "morhetz/gruvbox" }
     use { 'vim-airline/vim-airline' }
     use { 'vim-airline/vim-airline-themes' }
-    use { 'morhetz/gruvbox' }
     use { 'junegunn/fzf.vim' }
     use { 'scrooloose/nerdtree' }
     use { 'dyng/ctrlsf.vim' }

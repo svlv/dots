@@ -4,6 +4,7 @@ alacritty_dir = ${HOME}/.config/alacritty
 
 nvim_dir = ${HOME}/.config/nvim
 nvim_lua_dir = ${nvim_dir}/lua
+packer = ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim
 
 gtk3_dir = ${HOME}/.config/gtk-3.0
 
@@ -32,7 +33,7 @@ statusbar = ${statusbar_dir}/accuweather \
 			${statusbar_dir}/rate.py \
 			${statusbar_dir}/upt \
 			${statusbar_dir}/volume \
-			${statusbar_dir}/weather \
+			${statusbar_dir}/weather
 
 install: \
 	${shell_dir} \
@@ -59,6 +60,7 @@ install: \
 	${nvim_lua_dir} \
 	${nvim_lua_dir}/keymappings.lua \
 	${nvim_lua_dir}/plugins.lua \
+	${packer} \
 	${icons_default_dir} \
 	${icons_default_dir}/index.theme \
 	${share_icons_dir} \
@@ -163,6 +165,13 @@ ${nvim_lua_dir}:
 ${nvim_lua_dir}/%: .config/nvim/lua/%
 	cp $< $@
 
+${packer}:
+	git clone --depth 1 https://github.com/wbthomason/packer.nvim $@
+	nvim --headless \
+		-c 'autocmd User PackerComplete quitall' \
+		-c 'PackerSync' \
+		> /dev/null 2>&1
+
 # Cursor theme
 ${icons_default_dir}:
 	mkdir -p $@
@@ -178,8 +187,8 @@ ${share_icons_dir}/${cursor_theme}:
 		https://ewr1.vultrobjects.com/cursors/${cursor_theme}.tar.gz
 	tar xf /tmp/${cursor_theme}.tar.gz -C ${share_icons_dir}
 	rm /tmp/${cursor_theme}.tar.gz
-	ln -s ${share_icons_dir}/${cursor_theme}/cursors \
-		${icons_default_dir}/cursors
+	ln -s -f ${share_icons_dir}/${cursor_theme}/cursors \
+		${icons_default_dir}
 
 # Gtk-3
 ${gtk3_dir}:
