@@ -1,0 +1,51 @@
+#!/bin/bash
+
+cursor_themes=(
+    "ArcAurora-cursors"
+    "ArcDusk-cursors"
+    "ArcMidnight-cursors"
+    "ArcStarry-cursors"
+    "LyraQ-cursors"
+)
+
+cursor_theme_urls=(
+    "https://www.gnome-look.org/p/1665694"
+    "https://www.gnome-look.org/p/1652458"
+    "https://www.gnome-look.org/p/1659743"
+    "https://www.gnome-look.org/p/1644371"
+    "https://www.gnome-look.org/p/1518883"
+)
+
+
+if [[ ! " ${cursor_themes[*]} " =~ " ${1} " ]]; then
+    printf 'Usage: change-cursor-theme \e[4mcursor-theme\e[0m\n'
+    printf 'Supported cursor themes:\n'
+    for ((i=0; i< ${#cursor_themes[@]}; i++)) do
+        printf "%-20s\t%s\n" "${cursor_themes[$i]}" "${cursor_theme_urls[$i]}"
+    done
+    exit
+fi
+
+cursor_theme=${1}
+
+share_icons_dir=${HOME}/.local/share/icons
+icons_default_dir=${HOME}/.icons/default
+
+if [ ! -d ${share_icons_dir}/${cursor_theme} ]; then
+    wget -q --show-progress -P /tmp \
+		https://ewr1.vultrobjects.com/cursors/${cursor_theme}.tar.gz
+	tar xf /tmp/${cursor_theme}.tar.gz -C ${share_icons_dir}
+	rm /tmp/${cursor_theme}.tar.gz
+fi
+
+sed -i -e "s/^\(gtk-cursor-theme-name\)=\(.*\)/\1=${cursor_theme}/" \
+    ${HOME}/.config/gtk-3.0/settings.ini
+
+sed -i -e "s/^\(Xcursor.theme\):\(.*\)/\1: ${cursor_theme}/" \
+    ${HOME}/.Xresources
+
+sed -i -e "s/^\(Inherits\)=\(.*\)/\1=${cursor_theme}/" \
+    ${icons_default_dir}/index.theme
+
+ln -s -f ${share_icons_dir}/${cursor_theme}/cursors ${icons_default_dir}
+
