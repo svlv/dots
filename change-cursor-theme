@@ -16,7 +16,6 @@ cursor_theme_urls=(
     "https://www.gnome-look.org/p/1518883"
 )
 
-
 if [[ ! " ${cursor_themes[*]} " =~ " ${1} " ]]; then
     printf 'Usage: change-cursor-theme \e[4mcursor-theme\e[0m\n'
     printf 'Supported cursor themes:\n'
@@ -32,17 +31,28 @@ share_icons_dir=${HOME}/.local/share/icons
 icons_default_dir=${HOME}/.icons/default
 
 if [ ! -d ${share_icons_dir}/${cursor_theme} ]; then
+    [ ! -d ${share_icons_dir} ] && mkdir -p ${share_icons_dir}
     wget -q --show-progress -P /tmp \
-		https://ewr1.vultrobjects.com/cursors/${cursor_theme}.tar.gz
-	tar xf /tmp/${cursor_theme}.tar.gz -C ${share_icons_dir}
-	rm /tmp/${cursor_theme}.tar.gz
+        https://ewr1.vultrobjects.com/cursors/${cursor_theme}.tar.gz
+    tar xf /tmp/${cursor_theme}.tar.gz -C ${share_icons_dir}
+    rm /tmp/${cursor_theme}.tar.gz
 fi
 
+# TODO: * check if file exists
+# TODO: * check if a required setting exists
 sed -i -e "s/^\(gtk-cursor-theme-name\)=\(.*\)/\1=${cursor_theme}/" \
     ${HOME}/.config/gtk-3.0/settings.ini
 
 sed -i -e "s/^\(Xcursor.theme\):\(.*\)/\1: ${cursor_theme}/" \
     ${HOME}/.Xresources
+
+if [ ! -d ${icons_default_dir} ]; then
+    mkdir -p ${icons_default_dir}
+fi
+
+if [ ! -f ${icons_default_dir}/index.theme ]; then
+    echo "Inherits=" > ${icons_default_dir}/index.theme
+fi
 
 sed -i -e "s/^\(Inherits\)=\(.*\)/\1=${cursor_theme}/" \
     ${icons_default_dir}/index.theme

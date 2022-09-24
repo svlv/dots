@@ -1,0 +1,28 @@
+#!/bin/bash
+
+fonts=(
+    "Fira-Code"
+    "Symbola"
+)
+
+if [[ ! " ${fonts[*]} " =~ " ${1} " ]]; then
+    printf 'Usage: install-font \e[4mfont-name\e[0m\n'
+    printf 'Supported fonts:\n'
+    printf "%s\n" "${fonts[@]}"
+    exit
+fi
+
+font=${1}
+ttf_fonts_dir=${HOME}/.local/share/fonts/ttf
+
+if [ ! -d ${ttf_fonts_dir} ]; then
+    mkdir -p ${ttf_fonts_dir}
+fi
+
+wget -q --show-progress -P /tmp \
+    https://ewr1.vultrobjects.com/fonts/${font}.tar.gz
+tar xf /tmp/${font}.tar.gz -C ${ttf_fonts_dir}
+rm /tmp/${font}.tar.gz
+
+fc-cache -f
+

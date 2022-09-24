@@ -12,9 +12,16 @@ awesome_default_theme_dir = ${awesome_dir}/themes/default
 wallpapers_dir = ${HOME}/wallpapers
 statusbar_dir = ${HOME}/.local/bin/statusbar
 
-icons_default_dir = ${HOME}/.icons/default
 share_icons_dir = ${HOME}/.local/share/icons
 cursor_theme = ArcMidnight-cursors
+
+ttf_fonts_dir = ${HOME}/.local/share/fonts/ttf
+fira_code_fonts = ${ttf_fonts_dir}/FiraCode-Bold.ttf \
+		  ${ttf_fonts_dir}/FiraCode-Light.ttf \
+		  ${ttf_fonts_dir}/FiraCode-Medium.ttf \
+		  ${ttf_fonts_dir}/FiraCode-Regular.ttf \
+		  ${ttf_fonts_dir}/FiraCode-Retina.ttf \
+		  ${ttf_fonts_dir}/FiraCode-SemiBold.ttf
 
 statusbar = ${statusbar_dir}/accuweather \
 			${statusbar_dir}/backlight \
@@ -61,12 +68,12 @@ install: \
 	${nvim_lua_dir}/keymappings.lua \
 	${nvim_lua_dir}/plugins.lua \
 	${packer} \
-	${icons_default_dir} \
-	${icons_default_dir}/index.theme \
-	${share_icons_dir} \
-	${share_icons_dir}/${cursor_theme} \
 	${gtk3_dir} \
-	${gtk3_dir}/settings.ini
+	${gtk3_dir}/settings.ini \
+	${share_icons_dir}/${cursor_theme} \
+	${ttf_fonts_dir} \
+	${fira_code_fonts} \
+	${ttf_fonts_dir}/Symbola.ttf
 
 # Shell
 ${shell_dir}:
@@ -172,23 +179,8 @@ ${packer}:
 		-c 'PackerSync' \
 		> /dev/null 2>&1
 
-# Cursor theme
-${icons_default_dir}:
-	mkdir -p $@
-
-${icons_default_dir}/index.theme: .icons/default/index.theme
-	cp $< $@
-
-${share_icons_dir}:
-	mkdir -p $@
-
 ${share_icons_dir}/${cursor_theme}:
-	wget -q --show-progress -P /tmp \
-		https://ewr1.vultrobjects.com/cursors/${cursor_theme}.tar.gz
-	tar xf /tmp/${cursor_theme}.tar.gz -C ${share_icons_dir}
-	rm /tmp/${cursor_theme}.tar.gz
-	ln -s -f ${share_icons_dir}/${cursor_theme}/cursors \
-		${icons_default_dir}
+	./change-cursor-theme ${cursor_theme}
 
 # Gtk-3
 ${gtk3_dir}:
@@ -196,4 +188,22 @@ ${gtk3_dir}:
 
 ${gtk3_dir}/settings.ini: .config/gtk-3.0/settings.ini
 	cp $< $@
+
+# Fonts
+${ttf_fonts_dir}:
+	mkdir -p $@
+
+define install-font
+	wget -q --show-progress -P /tmp \
+    	https://ewr1.vultrobjects.com/fonts/${1}.tar.gz
+	tar xf /tmp/${1}.tar.gz -C ${ttf_fonts_dir}
+	rm /tmp/${1}.tar.gz
+	fc-cache -f
+endef
+
+${fira_code_fonts}:
+	${call install-font,Fira-Code}
+
+${ttf_fonts_dir}/Symbola.ttf:
+	${call install-font,Symbola}
 
