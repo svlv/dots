@@ -138,25 +138,35 @@ wibar.bar = function (args)
 
   local create = watch_widget_factory
 
-  push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}}
-  push_widget{widget=create{cmd="upt",timeout=60}}
---push_widget{widget=create{cmd="rate",timeout=60}}
---push_widget{widget=create{cmd="cpu",timeout=1}}
---push_widget{widget=create{cmd="cpu_temp",valign='top'}}
-  push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}}
---push_widget{widget=create{cmd="disk",valign='top'}}
-  push_widget{widget=vol}
+  my_widgets = "keyboardlayout,upt,ram,vol,battery,backlight,mailbox,atmos,internet,nettraf,datetime,layoutbox"
+
+  push_widget_mapping = {}
+
+    push_widget_mapping["keyboardlayout"] = function() push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}} end
+    push_widget_mapping["upt"] = function() push_widget{widget=create{cmd="upt",timeout=60}} end
+    push_widget_mapping["rate"] = function() push_widget{widget=create{cmd="rate",timeout=60}} end
+    push_widget_mapping["cpu"] = function() push_widget{widget=create{cmd="cpu",timeout=1}} end
+    push_widget_mapping["cpu_temp"] = function() push_widget{widget=create{cmd="cpu_temp",valign='top'}} end
+    push_widget_mapping["ram"] = function() push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}} end
+    push_widget_mapping["disk"] = function() push_widget{widget=create{cmd="disk",valign='top'}} end
+    push_widget_mapping["vol"] = function() push_widget{widget=vol} end
+    push_widget_mapping["battery"] = function() push_widget{widget=create{cmd="battery",valign='top'}} end
+    push_widget_mapping["backlight"] = function() push_widget{widget=backlight} end
+    push_widget_mapping["kernel"] = function() push_widget{widget=kernel} end
+    push_widget_mapping["mailbox"] = function() push_widget{widget=create{cmd="mailbox",timeout=1}} end
+    push_widget_mapping["atmos"] = function() push_widget{widget=create{cmd="atmos-line --get-current-weather",timeout=600}} end
+    push_widget_mapping["internet"] = function() push_widget{widget=create{cmd="internet",timeout=1}} end
+    push_widget_mapping["nettraf"] = function() push_widget{widget=create{cmd="nettraf",timeout=1}} end
+    push_widget_mapping["datetime"] = function() push_widget{widget=datetime} end
+    push_widget_mapping["layoutbox"] = function() push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true} end
+  
   if is_laptop() then
-     push_widget{widget=create{cmd="battery",valign='top'}}
-     push_widget{widget=backlight}
   end
---push_widget{widget=kernel}
-  push_widget{widget=create{cmd="mailbox",timeout=1}}
-  push_widget{widget=create{cmd="atmos-line --get-current-weather",timeout=600}}
-  push_widget{widget=create{cmd="internet",timeout=1}}
-  push_widget{widget=create{cmd="nettraf",timeout=1}}
-  push_widget{widget=datetime}
-  push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true}
+
+  for my_widget in string.gmatch(my_widgets, '([^,]+)') do
+    push_widget_mapping[my_widget]()
+  end
+
   return widgets
 end
 
