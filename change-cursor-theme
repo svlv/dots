@@ -18,7 +18,7 @@ cursor_theme_urls=(
 
 if [[ ! " ${cursor_themes[*]} " =~ " ${1} " ]]; then
     printf 'Usage: change-cursor-theme \e[4mcursor-theme\e[0m\n'
-    printf 'Supported cursor themes:\n'
+    printf 'Available cursor themes:\n'
     for ((i=0; i< ${#cursor_themes[@]}; i++)) do
         printf "%-20s\t%s\n" "${cursor_themes[$i]}" "${cursor_theme_urls[$i]}"
     done
@@ -38,13 +38,22 @@ if [ ! -d ${share_icons_dir}/${cursor_theme} ]; then
     rm /tmp/${cursor_theme}.tar.gz
 fi
 
-# TODO: * check if file exists
-# TODO: * check if a required setting exists
-sed -i -e "s/^\(gtk-cursor-theme-name\)=\(.*\)/\1=${cursor_theme}/" \
-    ${HOME}/.config/gtk-3.0/settings.ini
+gtk3_settings=${HOME}/.config/gtk-3.0/settings.ini
+if [ ! -f ${gtk3_settings} ]; then
+    printf "[Settings]\ngtk-cursor-theme-name=${cursor_theme}\n" > ${gtk3_settings}
+elif ! grep -q "gtk-cursor-theme-name=" ${gtk3_settings}; then
+    echo "gtk-cursor-theme-name=${cursor_theme}" >> ${gtk3_settings}
+else
+    sed -i -e "s/^\(gtk-cursor-theme-name\)=\(.*\)/\1=${cursor_theme}/" \
+        ${gtk3_settings}
+fi
 
-sed -i -e "s/^\(Xcursor.theme\):\(.*\)/\1: ${cursor_theme}/" \
-    ${HOME}/.Xresources
+xresources=${HOME}/.Xresources
+if [ ! -f ${xresources} ] || ! grep -q "Xcursor.theme:" ${xresources}; then
+    echo "Xcursor.theme: ${cursor_theme}" >> ${xresources}
+else
+    sed -i -e "s/^\(Xcursor.theme\):\(.*\)/\1: ${cursor_theme}/" ${xresources}
+fi
 
 if [ ! -d ${icons_default_dir} ]; then
     mkdir -p ${icons_default_dir}
