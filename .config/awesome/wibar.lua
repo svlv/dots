@@ -1,6 +1,8 @@
 local awful = require("awful")
 local wibox = require("wibox")
 
+local osmiumrc = require("osmiumrc")
+
 local beautiful = require("beautiful")
 local theme_path = string.format(
   "%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), "default")
@@ -136,39 +138,49 @@ wibar.bar = function (args)
     end
   end
 
-  local create = watch_widget_factory
-
-  my_widgets = "keyboardlayout,upt,ram,vol,battery,backlight,mailbox,atmos,internet,nettraf,datetime,layoutbox"
-
-  push_widget_mapping = {}
-
-    push_widget_mapping["keyboardlayout"] = function() push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"}} end
-    push_widget_mapping["upt"] = function() push_widget{widget=create{cmd="upt",timeout=60}} end
-    push_widget_mapping["rate"] = function() push_widget{widget=create{cmd="rate",timeout=60}} end
-    push_widget_mapping["cpu"] = function() push_widget{widget=create{cmd="cpu",timeout=1}} end
-    push_widget_mapping["cpu_temp"] = function() push_widget{widget=create{cmd="cpu_temp",valign='top'}} end
-    push_widget_mapping["ram"] = function() push_widget{widget=create{cmd="ram",timeout=2,valign ='top'}} end
-    push_widget_mapping["disk"] = function() push_widget{widget=create{cmd="disk",valign='top'}} end
-    push_widget_mapping["vol"] = function() push_widget{widget=vol} end
-    push_widget_mapping["battery"] = function() push_widget{widget=create{cmd="battery",valign='top'}} end
-    push_widget_mapping["backlight"] = function() push_widget{widget=backlight} end
-    push_widget_mapping["kernel"] = function() push_widget{widget=kernel} end
-    push_widget_mapping["mailbox"] = function() push_widget{widget=create{cmd="mailbox",timeout=1}} end
-    push_widget_mapping["atmos"] = function() push_widget{widget=create{cmd="atmos-line --get-current-weather",timeout=600}} end
-    push_widget_mapping["internet"] = function() push_widget{widget=create{cmd="internet",timeout=1}} end
-    push_widget_mapping["nettraf"] = function() push_widget{widget=create{cmd="nettraf",timeout=1}} end
-    push_widget_mapping["datetime"] = function() push_widget{widget=datetime} end
-    push_widget_mapping["layoutbox"] = function() push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=true} end
-  
-  if is_laptop() then
+  widgets_str = osmiumrc.widgets_str
+  if not widgets_str then
+    widgets_str = is_laptop() and "keyboardlayout,upt,ram,vol,battery,backlight,mailbox,atmos,internet,nettraf,datetime,layoutbox"
+                              or  "keyboardlayout,upt,ram,vol,atmos,internet,nettraf,datetime,layoutbox"
   end
 
-  for my_widget in string.gmatch(my_widgets, '([^,]+)') do
-    push_widget_mapping[my_widget]()
+  lat = osmiumrc.lat and osmiumrc.lat or 51.5072
+  lon = osmiumrc.lon and osmiumrc.lon or 0.1276
+
+  local create = watch_widget_factory
+  push_widget_mapping = {
+    ["keyboardlayout"] = function(is_last) push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"},last=is_last} end,
+    ["upt"] = function(is_last) push_widget{widget=create{cmd="upt",timeout=60},last=is_last} end,
+    ["rate"] = function(is_last) push_widget{widget=create{cmd="rate",timeout=60},last=is_last} end,
+    ["cpu"] = function(is_last) push_widget{widget=create{cmd="cpu",timeout=1},last=is_last} end,
+    ["cpu_temp"] = function(is_last) push_widget{widget=create{cmd="cpu_temp",valign='top'},last=is_last} end,
+    ["ram"] = function(is_last) push_widget{widget=create{cmd="ram",timeout=2,valign ='top'},last=is_last} end,
+    ["disk"] = function(is_last) push_widget{widget=create{cmd="disk",valign='top'},last=is_last} end,
+    ["vol"] = function(is_last) push_widget{widget=vol,last=is_last} end,
+    ["battery"] = function(is_last) push_widget{widget=create{cmd="battery",valign='top'},last=is_last} end,
+    ["backlight"] = function(is_last) push_widget{widget=backlight,last=is_last} end,
+    ["kernel"] = function(is_last) push_widget{widget=kernel,last=is_last} end,
+    ["mailbox"] = function(is_last) push_widget{widget=create{cmd="mailbox",timeout=1},last=is_last} end,
+    ["atmos"] = function(is_last) push_widget{widget=create{cmd="atmos-line --get-current-weather-with-pollution".." --lat "..lat.." --lon "..lon, timeout=600},last=is_last} end,
+    ["internet"] = function(is_last) push_widget{widget=create{cmd="internet",timeout=1},last=is_last} end,
+    ["nettraf"] = function(is_last) push_widget{widget=create{cmd="nettraf",timeout=1},last=is_last} end,
+    ["datetime"] = function(is_last) push_widget{widget=datetime,last=is_last} end,
+    ["layoutbox"] = function(is_last) push_widget{widget=wibox.widget{args.screen.mylayoutbox, layout = hrz},last=is_last} end
+  }
+
+  local widgets_arr = {}
+  for widget in string.gmatch(widgets_str, '([^,]+)') do
+    table.insert(widgets_arr, string.lower(widget))
+  end
+
+  for idx=1, #widgets_arr do
+    func = push_widget_mapping[widgets_arr[idx]]
+    if func then
+        func(idx == #widgets_arr)
+    end
   end
 
   return widgets
 end
 
 return wibar
-

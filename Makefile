@@ -52,6 +52,7 @@ install: \
 	${HOME}/.Xresources \
 	${awesome_dir} \
 	${awesome_dir}/rc.lua \
+	${awesome_dir}/osmiumrc.lua \
 	${awesome_dir}/wibar.lua \
 	${awesome_dir}/osmium \
 	${awesome_default_theme_dir} \
@@ -116,6 +117,9 @@ ${awesome_dir}/rc.lua: .config/awesome/rc.lua
 	cp $< $@
 
 ${awesome_dir}/wibar.lua: .config/awesome/wibar.lua
+	cp $< $@
+
+${awesome_dir}/osmiumrc.lua: .config/awesome/osmiumrc.lua
 	cp $< $@
 
 ${awesome_dir}/osmium:
@@ -195,7 +199,7 @@ ${ttf_fonts_dir}:
 
 define install-font
 	wget -q --show-progress -P /tmp \
-    	https://ewr1.vultrobjects.com/fonts/${1}.tar.gz
+		https://ewr1.vultrobjects.com/fonts/${1}.tar.gz
 	tar xf /tmp/${1}.tar.gz -C ${ttf_fonts_dir}
 	rm /tmp/${1}.tar.gz
 	fc-cache -f
@@ -206,4 +210,3 @@ ${fira_code_fonts}:
 
 ${ttf_fonts_dir}/Symbola.ttf:
 	${call install-font,Symbola}
-
