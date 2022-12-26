@@ -369,6 +369,9 @@ globalkeys = gears.table.join(
     -- Notes
     awful.key({ modkey }, "e", function () awful.util.spawn("termite -e \"" .. editor .. " " .. home .. "/English/notes\" -t engnote") end),
 
+    -- Password
+    awful.key({ modkey }, "[", function () awful.util.spawn("pass -c nable/master") end),
+
     -- Lua
     awful.key({ modkey }, "x",
               function ()
