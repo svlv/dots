@@ -18,3 +18,46 @@ source_if_exists() {
   [ -f ${1} ] && source ${1}
 }
 
+# Launch the given app if one exists
+function launch_if_exists() {
+    if command -v $1 &> /dev/null; then
+        $1 &
+    fi
+}
+
+# Returns true/false compatible with test, checks if apps for work must be run
+function am_i_resting_now() {
+    # For 2023
+    holidays=(
+        "January 1"
+        "January 6"
+        "April 9"
+        "April 10"
+        "May 1"
+        "May 3"
+        "May 28"
+        "June 8"
+        "August 15"
+        "November 1"
+        "November 11"
+        "December 25"
+        "December 26"
+    )
+    day="$(date +'%B %d')"
+    for holiday in "${holidays[@]}"; do
+        [[ "${day}" == "${holiday}" ]] && return
+    done
+
+    weekends=(
+        "Saturday"
+        "Sunday"
+    )
+    today="$(date +'%A')"
+    for weekend in "${weekends[@]}"; do
+        [[ "${today}" == "${weekend}" ]] && return
+    done
+
+    hours="$(date +'%H')"
+    [[ ${hours} > "17" || ${hours} < "08" ]]
+}
+
