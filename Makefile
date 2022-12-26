@@ -60,7 +60,7 @@ install: \
 	${awesome_default_theme_dir} \
 	${awesome_default_theme_dir}/theme.lua \
 	${wallpapers_dir} \
-	${wallpapers_dir}/0002.jpg \
+	${wallpapers_dir}/0000.jpg \
 	${statusbar_dir} \
 	${statusbar} \
 	${alacritty_dir} \
@@ -136,9 +136,9 @@ ${awesome_default_theme_dir}/theme.lua: .config/awesome/themes/default/theme.lua
 ${wallpapers_dir}:
 	mkdir -p $@
 
-${wallpapers_dir}/0002.jpg:
+${wallpapers_dir}/0000.jpg:
 	wget -q --show-progress -P ${@D} \
-		https://ewr1.vultrobjects.com/wallpapers/0002.jpg
+		https://ewr1.vultrobjects.com/wallpapers/0000.jpg
 
 ${statusbar_dir}:
 	mkdir -p $@
@@ -154,7 +154,7 @@ awesome: \
 	${awesome_default_theme_dir} \
 	${awesome_default_theme_dir}/theme.lua \
 	${wallpapers_dir} \
-	${wallpapers_dir}/0002.jpg \
+	${wallpapers_dir}/0000.jpg \
 	${statusbar_dir} \
 	${statusbar}
 
