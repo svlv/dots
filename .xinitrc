@@ -32,9 +32,18 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
+utils=$HOME/.config/shell/utils
+[ -f $utils ] && source $utils
+
 numlockx on &
 picom &
 nm-applet &
+
+if ! am_i_resting_now; then
+    for app in teams gpclient prospect-mail; do
+	    launch_if_exists $app
+    done
+fi
 
 session="${1:awesome}"
 case $session in

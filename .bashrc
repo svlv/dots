@@ -57,6 +57,7 @@ PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 source_if_exists /usr/share/fzf/completion.bash
 source_if_exists /usr/share/fzf/key-bindings.bash
 source_if_exists /usr/share/bash-completion/completions/pass
+source_if_exists /usr/share/bash-completion/completions/git
 
 # Custom completions:
 complete -W 'user1@host1 user2@host2' ssh

@@ -1,5 +1,6 @@
 
-Xcursor.theme: Future-cyan-cursors
+Xcursor.theme: ArcMidnight-cursors
+Xcursor.size: 22
 
 ! special
 *.foreground:   #bbc2cf

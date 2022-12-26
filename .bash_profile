@@ -10,7 +10,7 @@ export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 export EDITOR="nvim"
 export TERMINAL="alacritty"
-export BROWSER="google-chrome-stable"
+export BROWSER="brave"
 export WM="awesome"
 #export MANPAGER="nvim -c 'set ft=man' -"
 
