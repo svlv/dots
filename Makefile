@@ -15,6 +15,8 @@ statusbar_dir = ${HOME}/.local/bin/statusbar
 share_icons_dir = ${HOME}/.local/share/icons
 cursor_theme = ArcMidnight-cursors
 
+xorg_conf_dir = /etc/X11/xorg.conf.d
+
 ttf_fonts_dir = ${HOME}/.local/share/fonts/ttf
 fira_code_fonts = ${ttf_fonts_dir}/FiraCode-Bold.ttf \
 		  ${ttf_fonts_dir}/FiraCode-Light.ttf \
@@ -210,3 +212,10 @@ ${fira_code_fonts}:
 
 ${ttf_fonts_dir}/Symbola.ttf:
 	${call install-font,Symbola}
+
+# keyboard
+${xorg_conf_dir}/00-keyboard.conf: etc/X11/xorg.conf.d/00-keyboard.conf
+	sudo cp $< $@
+
+keyboard: ${xorg_conf_dir}/00-keyboard.conf
+

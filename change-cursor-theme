@@ -5,6 +5,8 @@ cursor_themes=(
     "ArcDusk-cursors"
     "ArcMidnight-cursors"
     "ArcStarry-cursors"
+    "Future-cursors"
+    "Future-cyan-cursors"
     "LyraQ-cursors"
 )
 
@@ -13,6 +15,8 @@ cursor_theme_urls=(
     "https://www.gnome-look.org/p/1652458"
     "https://www.gnome-look.org/p/1659743"
     "https://www.gnome-look.org/p/1644371"
+    "https://www.gnome-look.org/p/1457141"
+    "https://store.kde.org/p/1465392"
     "https://www.gnome-look.org/p/1518883"
 )
 
@@ -28,8 +32,6 @@ fi
 cursor_theme=${1}
 
 share_icons_dir=${HOME}/.local/share/icons
-icons_default_dir=${HOME}/.icons/default
-
 if [ ! -d ${share_icons_dir}/${cursor_theme} ]; then
     [ ! -d ${share_icons_dir} ] && mkdir -p ${share_icons_dir}
     wget -q --show-progress -P /tmp \
@@ -55,6 +57,7 @@ else
     sed -i -e "s/^\(Xcursor.theme\):\(.*\)/\1: ${cursor_theme}/" ${xresources}
 fi
 
+icons_default_dir=${HOME}/.icons/default
 if [ ! -d ${icons_default_dir} ]; then
     mkdir -p ${icons_default_dir}
 fi
@@ -67,4 +70,3 @@ sed -i -e "s/^\(Inherits\)=\(.*\)/\1=${cursor_theme}/" \
     ${icons_default_dir}/index.theme
 
 ln -s -f ${share_icons_dir}/${cursor_theme}/cursors ${icons_default_dir}
-
