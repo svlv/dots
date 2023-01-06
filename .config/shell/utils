@@ -29,16 +29,16 @@ function launch_if_exists() {
 function am_i_resting_now() {
     # For 2023
     holidays=(
-        "January 1"
-        "January 6"
-        "April 9"
+        "January 01"
+        "January 06"
+        "April 09"
         "April 10"
-        "May 1"
-        "May 3"
+        "May 01"
+        "May 03"
         "May 28"
-        "June 8"
+        "June 08"
         "August 15"
-        "November 1"
+        "November 01"
         "November 11"
         "December 25"
         "December 26"
