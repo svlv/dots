@@ -7,6 +7,7 @@ cursor_themes=(
     "ArcStarry-cursors"
     "Bibata-Modern-DarkRed"
     "Bibata-Modern-DodgerBlue"
+    "Bibata-Modern-Turquoise"
     "Future-cursors"
     "Future-cyan-cursors"
     "LyraQ-cursors"
@@ -17,6 +18,7 @@ cursor_theme_urls=(
     "https://www.gnome-look.org/p/1652458"
     "https://www.gnome-look.org/p/1659743"
     "https://www.gnome-look.org/p/1644371"
+    "https://www.gnome-look.org/p/1269768"
     "https://www.gnome-look.org/p/1269768"
     "https://www.gnome-look.org/p/1269768"
     "https://www.gnome-look.org/p/1457141"
@@ -35,7 +37,7 @@ fi
 
 cursor_theme=${1}
 if [ -z ${2+x} ]; then
-    cursor_size="32"
+    cursor_size="24"
 else
     cursor_size=${2}
 fi
