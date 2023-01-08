@@ -5,6 +5,8 @@ cursor_themes=(
     "ArcDusk-cursors"
     "ArcMidnight-cursors"
     "ArcStarry-cursors"
+    "Bibata-Modern-DarkRed"
+    "Bibata-Modern-DodgerBlue"
     "Future-cursors"
     "Future-cyan-cursors"
     "LyraQ-cursors"
@@ -15,6 +17,8 @@ cursor_theme_urls=(
     "https://www.gnome-look.org/p/1652458"
     "https://www.gnome-look.org/p/1659743"
     "https://www.gnome-look.org/p/1644371"
+    "https://www.gnome-look.org/p/1269768"
+    "https://www.gnome-look.org/p/1269768"
     "https://www.gnome-look.org/p/1457141"
     "https://store.kde.org/p/1465392"
     "https://www.gnome-look.org/p/1518883"
@@ -24,12 +28,17 @@ if [[ ! " ${cursor_themes[*]} " =~ " ${1} " ]]; then
     printf 'Usage: change-cursor-theme \e[4mcursor-theme\e[0m\n'
     printf 'Available cursor themes:\n'
     for ((i=0; i< ${#cursor_themes[@]}; i++)) do
-        printf "%-20s\t%s\n" "${cursor_themes[$i]}" "${cursor_theme_urls[$i]}"
+        printf "%-24s\t%s\n" "${cursor_themes[$i]}" "${cursor_theme_urls[$i]}"
     done
     exit
 fi
 
 cursor_theme=${1}
+if [ -z ${2+x} ]; then
+    cursor_size="32"
+else
+    cursor_size=${2}
+fi
 
 share_icons_dir=${HOME}/.local/share/icons
 if [ ! -d ${share_icons_dir}/${cursor_theme} ]; then
@@ -40,33 +49,62 @@ if [ ! -d ${share_icons_dir}/${cursor_theme} ]; then
     rm /tmp/${cursor_theme}.tar.gz
 fi
 
+update_param () {
+    path=$1
+    param=$2
+    value=$3
+    separator=$4
+
+    if [ ! -f ${path} ]; then
+        return 2 # no such file
+    elif ! grep -q "${param}${separator}" ${path}; then # param is not used
+        printf "${param}${separator}${value}\n" >> ${path}
+    else # update value
+        sed -i -e "s/^\(${param}${separator}\)\(.*\)/\1${value}/" ${path}
+    fi
+}
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+printf "Updating gtk3 settings... "
 gtk3_settings=${HOME}/.config/gtk-3.0/settings.ini
 if [ ! -f ${gtk3_settings} ]; then
-    printf "[Settings]\ngtk-cursor-theme-name=${cursor_theme}\n" > ${gtk3_settings}
-elif ! grep -q "gtk-cursor-theme-name=" ${gtk3_settings}; then
-    echo "gtk-cursor-theme-name=${cursor_theme}" >> ${gtk3_settings}
-else
-    sed -i -e "s/^\(gtk-cursor-theme-name\)=\(.*\)/\1=${cursor_theme}/" \
-        ${gtk3_settings}
+    printf "[Settings]\n" > ${gtk3_settings}
 fi
+update_param ${gtk3_settings} "gtk-cursor-theme-name" ${cursor_theme} "=" && \
+update_param ${gtk3_settings} "gtk-cursor-theme-size" ${cursor_size} "=" \
+    && printf "${GREEN}Done!${NC}\n" \
+    || printf "${RED}Error!${NC}\n"
 
+printf "Updating X recources... "
 xresources=${HOME}/.Xresources
-if [ ! -f ${xresources} ] || ! grep -q "Xcursor.theme:" ${xresources}; then
-    echo "Xcursor.theme: ${cursor_theme}" >> ${xresources}
-else
-    sed -i -e "s/^\(Xcursor.theme\):\(.*\)/\1: ${cursor_theme}/" ${xresources}
+if [ ! -f ${xresources} ]; then
+    touch ${xresources}
 fi
+update_param ${xresources} "Xcursor.theme" ${cursor_theme} ":" && \
+update_param ${xresources} "Xcursor.size" ${cursor_size} ":" \
+    && printf "${GREEN}Done!${NC}\n" \
+    || printf "${RED}Error!${NC}\n"
+
+printf "Updating index.theme... "
 
 icons_default_dir=${HOME}/.icons/default
 if [ ! -d ${icons_default_dir} ]; then
     mkdir -p ${icons_default_dir}
 fi
 
-if [ ! -f ${icons_default_dir}/index.theme ]; then
-    echo "Inherits=" > ${icons_default_dir}/index.theme
+index_theme=${icons_default_dir}/index.theme
+if [ ! -f  ${index_theme} ]; then
+    touch ${index_theme}
 fi
+update_param ${index_theme} "Inherits" ${cursor_theme} "=" \
+    && printf "${GREEN}Done!${NC}\n" \
+    || printf "${RED}Error!${NC}\n"
 
-sed -i -e "s/^\(Inherits\)=\(.*\)/\1=${cursor_theme}/" \
-    ${icons_default_dir}/index.theme
+printf "Creating link to new cursors..."
+ln -s -f ${share_icons_dir}/${cursor_theme}/cursors ${icons_default_dir} \
+    && printf "${GREEN}Done!${NC}\n" \
+    || printf "${RED}Error!${NC}\n"
 
-ln -s -f ${share_icons_dir}/${cursor_theme}/cursors ${icons_default_dir}
