@@ -27,11 +27,14 @@ cursor_theme_urls=(
 )
 
 if [[ ! " ${cursor_themes[*]} " =~ " ${1} " ]]; then
-    printf 'Usage: change-cursor-theme \e[4mcursor-theme\e[0m\n'
+    printf "Usage: change-cursor-theme \
+\e[4mcursor-theme\e[0m \
+\e[4mcursor-size\e[0m\n\n"
     printf 'Available cursor themes:\n'
     for ((i=0; i< ${#cursor_themes[@]}; i++)) do
         printf "%-24s\t%s\n" "${cursor_themes[$i]}" "${cursor_theme_urls[$i]}"
     done
+    printf '\nExample: change-cursor-theme LyraQ-cursors 24\n'
     exit
 fi
 

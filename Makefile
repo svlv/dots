@@ -10,6 +10,7 @@ gtk3_dir = ${HOME}/.config/gtk-3.0
 
 awesome_default_theme_dir = ${awesome_dir}/themes/default
 wallpapers_dir = ${HOME}/wallpapers
+localbin_dir = ${HOME}/.local/bin
 statusbar_dir = ${HOME}/.local/bin/statusbar
 
 share_icons_dir = ${HOME}/.local/share/icons
@@ -61,6 +62,8 @@ install: \
 	${awesome_default_theme_dir}/theme.lua \
 	${wallpapers_dir} \
 	${wallpapers_dir}/0000.jpg \
+	${localbin_dir} \
+	${localbin_dir}/change-cursor-theme \
 	${statusbar_dir} \
 	${statusbar} \
 	${alacritty_dir} \
@@ -140,6 +143,12 @@ ${wallpapers_dir}/0000.jpg:
 	wget -q --show-progress -P ${@D} \
 		https://ewr1.vultrobjects.com/wallpapers/0000.jpg
 
+${localbin_dir}:
+	mkdir -p $@
+
+${localbin_dir}/%: .local/bin/%
+	cp $< $@
+
 ${statusbar_dir}:
 	mkdir -p $@
 
@@ -213,7 +222,7 @@ ${fira_code_fonts}:
 ${ttf_fonts_dir}/Symbola.ttf:
 	${call install-font,Symbola}
 
-# keyboard
+# keyboard (requires sudo)
 ${xorg_conf_dir}/00-keyboard.conf: etc/X11/xorg.conf.d/00-keyboard.conf
 	sudo cp $< $@
 
