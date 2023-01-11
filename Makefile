@@ -195,7 +195,7 @@ ${packer}:
 		> /dev/null 2>&1
 
 ${share_icons_dir}/${cursor_theme}:
-	./change-cursor-theme ${cursor_theme}
+	.local/bin/change-cursor-theme ${cursor_theme}
 
 # Gtk-3
 ${gtk3_dir}:
