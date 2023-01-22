@@ -59,6 +59,8 @@ source_if_exists /usr/share/fzf/key-bindings.bash
 source_if_exists /usr/share/bash-completion/completions/pass
 source_if_exists /usr/share/bash-completion/completions/git
 
+for fl in "${HOME}/.local/share/bash-completions/*"; do source ${fl}; done
+
 # Custom completions:
 complete -W 'user1@host1 user2@host2' ssh
 

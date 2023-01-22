@@ -14,6 +14,7 @@ localbin_dir = ${HOME}/.local/bin
 statusbar_dir = ${HOME}/.local/bin/statusbar
 
 share_icons_dir = ${HOME}/.local/share/icons
+share_completions_dir = ${HOME}/.local/share/bash-completions
 cursor_theme = ArcMidnight-cursors
 
 xorg_conf_dir = /etc/X11/xorg.conf.d
@@ -64,6 +65,8 @@ install: \
 	${wallpapers_dir}/0000.jpg \
 	${localbin_dir} \
 	${localbin_dir}/change-cursor-theme \
+	${share_completions_dir} \
+	${share_completions_dir}/change-cursor-theme \
 	${statusbar_dir} \
 	${statusbar} \
 	${alacritty_dir} \
@@ -147,6 +150,12 @@ ${localbin_dir}:
 	mkdir -p $@
 
 ${localbin_dir}/%: .local/bin/%
+	cp $< $@
+
+${share_completions_dir}:
+	mkdir -p $@
+
+${share_completions_dir}/%: .local/share/bash-completions/%
 	cp $< $@
 
 ${statusbar_dir}:
