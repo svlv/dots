@@ -1,0 +1,24 @@
+#!/bin/bash
+
+outputdir=${1-${HOME}/wallpapers}
+storage=https://ewr1.vultrobjects.com/wallpapers
+
+[ -d ${outputdir} ] || mkdir -p ${outputdir}
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+for idx in {0..100}; do
+    wallpaper="$(printf "%04d" $idx).jpg"
+    if [ ! -e  ${outputdir}/${wallpaper} ]; then
+        retcode=$(curl -o /dev/null --silent -Iw '%{http_code}' ${storage}/${wallpaper})
+        if [ ${retcode} == "200" ]; then
+            printf "Downloading ${storage}/${wallpaper} ... "
+            curl -fsSL ${storage}/${wallpaper} -o ${outputdir}/${wallpaper} \
+                && printf "${GREEN}Done!${NC}\n" \
+                || printf "${RED}Error!${NC}\n"
+        fi
+    fi
+done
+

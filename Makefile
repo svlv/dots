@@ -65,6 +65,7 @@ install: \
 	${wallpapers_dir}/0000.jpg \
 	${localbin_dir} \
 	${localbin_dir}/change-cursor-theme \
+	${localbin_dir}/download-wallpapers \
 	${share_completions_dir} \
 	${share_completions_dir}/change-cursor-theme \
 	${statusbar_dir} \
