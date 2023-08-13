@@ -7,4 +7,5 @@ return require('packer').startup(function()
     use { 'scrooloose/nerdtree' }
     use { 'dyng/ctrlsf.vim' }
     use { 'kien/ctrlp.vim' }
+    use { "catppuccin/nvim", as = "catppuccin" }
 end)
