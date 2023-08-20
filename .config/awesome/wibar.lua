@@ -110,6 +110,19 @@ vol:buttons(awful.util.table.join(
   end)
 ))
 
+-- weather
+local lat = osmiumrc.lat and osmiumrc.lat or 51.5072
+local lon = osmiumrc.lon and osmiumrc.lon or 0.1276
+local token = osmiumrc.token
+
+local weather = watch_widget_factory{cmd="atmos-line --get-current-weather-with-pollution".." --lat "..lat.." --lon "..lon, timeout=600}
+weather:buttons(awful.util.table.join(
+  awful.button({}, 1,
+  function() -- scroll up
+    awful.util.spawn("atmos-gui --lat "..lat.." --lon "..lon.." --token "..token.." --posx 1200 --posy 22", false)
+  end)
+))
+
 -- datetime with calendar
 local datetime = watch_widget_factory{cmd="datetime",timeout=60}
 osmium.widget.cal{
@@ -144,9 +157,6 @@ wibar.bar = function (args)
                               or  "keyboardlayout,upt,ram,vol,atmos,internet,nettraf,datetime,layoutbox"
   end
 
-  lat = osmiumrc.lat and osmiumrc.lat or 51.5072
-  lon = osmiumrc.lon and osmiumrc.lon or 0.1276
-
   local create = watch_widget_factory
   push_widget_mapping = {
     ["keyboardlayout"] = function(is_last) push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"},last=is_last} end,
@@ -161,7 +171,7 @@ wibar.bar = function (args)
     ["backlight"] = function(is_last) push_widget{widget=backlight,last=is_last} end,
     ["kernel"] = function(is_last) push_widget{widget=kernel,last=is_last} end,
     ["mailbox"] = function(is_last) push_widget{widget=create{cmd="mailbox",timeout=1},last=is_last} end,
-    ["atmos"] = function(is_last) push_widget{widget=create{cmd="atmos-line --get-current-weather-with-pollution".." --lat "..lat.." --lon "..lon, timeout=600},last=is_last} end,
+    ["atmos"] = function(is_last) push_widget{widget=weather,last=is_last} end,
     ["internet"] = function(is_last) push_widget{widget=create{cmd="internet",timeout=1},last=is_last} end,
     ["nettraf"] = function(is_last) push_widget{widget=create{cmd="nettraf",timeout=1},last=is_last} end,
     ["datetime"] = function(is_last) push_widget{widget=datetime,last=is_last} end,

@@ -8,7 +8,7 @@ vim.go.dir = home_dir .. '/.config/nvim/tmp'
 
 vim.wo.relativenumber = true
 vim.wo.cursorline = true
---vim.wo.list = true
+vim.wo.list = true
 vim.wo.listchars = 'space:·'
 vim.wo.colorcolumn = '80'
 
@@ -22,7 +22,7 @@ vim.bo.autoindent = true
 
 require('plugins')
 
-vim.cmd([[colorscheme gruvbox]])
+vim.cmd [[colorscheme catppuccin-mocha]]
 
 -- Airline
 vim.g.airline_theme = 'violet'
