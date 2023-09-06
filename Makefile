@@ -112,10 +112,10 @@ ${HOME}/.Xresources: .Xresources
 bash: \
 	${shell_dir} \
 	${shell_dir}/aliases \
-	${shell_dir}/utils
+	${shell_dir}/utils \
 	${HOME}/.bashrc \
 	${HOME}/.bash_profile \
-	${HOME}/.xinirc \
+	${HOME}/.xinitrc \
 	${HOME}/.Xresources
 
 # AwesomeWM
@@ -204,6 +204,14 @@ ${packer}:
 		-c 'PackerSync' \
 		> /dev/null 2>&1
 
+neovim: \
+	${nvim_dir} \
+	${nvim_dir}/init.lua \
+	${nvim_lua_dir} \
+	${nvim_lua_dir}/keymappings.lua \
+	${nvim_lua_dir}/plugins.lua \
+	${packer}
+
 ${share_icons_dir}/${cursor_theme}:
 	.local/bin/change-cursor-theme ${cursor_theme}
 
@@ -237,4 +245,3 @@ ${xorg_conf_dir}/00-keyboard.conf: etc/X11/xorg.conf.d/00-keyboard.conf
 	sudo cp $< $@
 
 keyboard: ${xorg_conf_dir}/00-keyboard.conf
-

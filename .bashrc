@@ -54,12 +54,21 @@ PS1="\
 PROMPT_COMMAND='echo -ne "\033]0;${TERM}\007"'
 
 # Load completions
-source_if_exists /usr/share/fzf/completion.bash
-source_if_exists /usr/share/fzf/key-bindings.bash
-source_if_exists /usr/share/bash-completion/completions/pass
-source_if_exists /usr/share/bash-completion/completions/git
 
-for fl in "${HOME}/.local/share/bash-completions/*"; do source ${fl}; done
+# for fzf installed via brew on for macOS
+if [ "$(uname)" == "Darwin" ]; then
+    source_if_exists $(brew --prefix)/opt/fzf/shell/completion.bash
+    source_if_exists $(brew --prefix)/opt/fzf/shell/key-bindings.bash
+else
+    source_if_exists /usr/share/fzf/completion.bash
+    source_if_exists /usr/share/fzf/key-bindings.bash
+    source_if_exists /usr/share/bash-completion/completions/pass
+    source_if_exists /usr/share/bash-completion/completions/git
+fi
+
+if [ -d "${HOME}/.local/share/bash-completions" ]; then
+    for fl in "${HOME}/.local/share/bash-completions/*"; do source ${fl}; done
+fi
 
 # Custom completions:
 complete -W 'user1@host1 user2@host2' ssh

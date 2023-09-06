@@ -8,17 +8,17 @@ vim.go.dir = home_dir .. '/.config/nvim/tmp'
 
 vim.wo.relativenumber = true
 vim.wo.cursorline = true
-vim.wo.list = true
-vim.wo.listchars = 'space:·'
+vim.o.list = true
+vim.o.listchars = 'space:·'
 vim.wo.colorcolumn = '80'
 
-vim.bo.tabstop = 4
-vim.bo.shiftwidth = 4
-vim.bo.expandtab = true
-vim.bo.autoindent = true
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
+vim.o.autoindent = true
 
 --vim.bo.textwidth = 80
---set hidden
+-- set hidden
 
 require('plugins')
 

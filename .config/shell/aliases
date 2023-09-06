@@ -17,5 +17,6 @@ alias me="meson"
 alias pi="sudo pacman -S"
 alias piu="sudo pacman -Syu"
 
-alias logout="loginctl terminate-session $(loginctl session-status | awk 'NR==1{print $1}')"
-
+if command -v loginctl &> /dev/null; then
+    alias logout="loginctl terminate-session $(loginctl session-status | awk 'NR==1{print $1}')"
+fi
