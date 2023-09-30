@@ -42,3 +42,32 @@ let g:ctrlp_custom_ignore = {
 \}
 ]])
 
+local configs = require'nvim-treesitter.configs'
+configs.setup {
+    ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query" },
+
+    highlight = {
+        enable = true
+    },
+
+    indent = {
+      enable = false
+    }
+}
+
+--vim.opt.foldmethod = "expr"
+--vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+
+require("lspconfig").lua_ls.setup{}
+--require("lspconfig").clangd.setup{}
+
+local keymap = vim.api.nvim_set_keymap
+local opts = { noremap = true }
+
+keymap('n', 'gd', ':lua vim.lsp.buf.definition()<cr>', opts)
+keymap('n', 'gD', ':lua vim.lsp.buf.declaration()<cr>', opts)
+keymap('n', 'gi', ':lua vim.lsp.buf.implementation()<cr>', opts)
+
