@@ -6,6 +6,8 @@ nvim_dir = ${HOME}/.config/nvim
 nvim_lua_dir = ${nvim_dir}/lua
 packer = ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim
 
+tmux_dir = ${HOME}/.config/tmux
+
 gtk3_dir = ${HOME}/.config/gtk-3.0
 
 awesome_default_theme_dir = ${awesome_dir}/themes/default
@@ -83,7 +85,8 @@ install: \
 	${share_icons_dir}/${cursor_theme} \
 	${ttf_fonts_dir} \
 	${fira_code_fonts} \
-	${ttf_fonts_dir}/Symbola.ttf
+	${ttf_fonts_dir}/Symbola.ttf \
+	tmux
 
 # Shell
 ${shell_dir}:
@@ -212,6 +215,16 @@ neovim: \
 	${nvim_lua_dir}/plugins.lua \
 	${packer}
 
+# tmux
+${tmux_dir}:
+	mkdir -p $@
+
+${tmux_dir}/tmux.conf: ${tmux_dir} .config/tmux/tmux.conf
+	cp .config/tmux/tmux.conf $@
+
+tmux: ${tmux_dir}/tmux.conf
+
+# Cursor theme
 ${share_icons_dir}/${cursor_theme}:
 	.local/bin/change-cursor-theme ${cursor_theme}
 

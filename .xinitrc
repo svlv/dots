@@ -41,9 +41,12 @@ nm-applet &
 
 if ! am_i_resting_now; then
     for app in teams gpclient prospect-mail; do
-	    launch_if_exists $app
+        launch_if_exists $app
     done
 fi
+
+# Setting keyboard repeat rate
+xset r rate 200 25
 
 session="${1:awesome}"
 case $session in

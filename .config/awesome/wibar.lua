@@ -119,7 +119,14 @@ local weather = watch_widget_factory{cmd="atmos-line --get-current-weather-with-
 weather:buttons(awful.util.table.join(
   awful.button({}, 1,
   function() -- scroll up
-    awful.util.spawn("atmos-gui --lat "..lat.." --lon "..lon.." --token "..token.." --posx 1200 --posy 22", false)
+    -- set mouse coords
+    -- mouse.coords {
+    --     x = 185,
+    --     y = 10
+    -- }
+    posx = mouse.coords().x
+    posy = 23
+    awful.util.spawn("atmos-gui --lat "..lat.." --lon "..lon.." --token "..token.." --posx "..posx.." --posy "..posy, false)
   end)
 ))
 
