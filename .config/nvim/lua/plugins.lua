@@ -15,5 +15,6 @@ return require('packer').startup(function()
     use "williamboman/mason.nvim"
     use "williamboman/mason-lspconfig.nvim"
     use 'neovim/nvim-lspconfig'
-    --use 'williamboman/nvim-lsp-installer'
+
+    use 'RRethy/vim-illuminate'
 end)

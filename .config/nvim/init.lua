@@ -59,7 +59,10 @@ configs.setup {
 --vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 
 require("mason").setup()
-require("mason-lspconfig").setup()
+
+require("mason-lspconfig").setup {
+    ensure_installed = { "lua_ls", "clangd" },
+}
 
 require("lspconfig").lua_ls.setup{}
 --require("lspconfig").clangd.setup{}
@@ -70,4 +73,11 @@ local opts = { noremap = true }
 keymap('n', 'gd', ':lua vim.lsp.buf.definition()<cr>', opts)
 keymap('n', 'gD', ':lua vim.lsp.buf.declaration()<cr>', opts)
 keymap('n', 'gi', ':lua vim.lsp.buf.implementation()<cr>', opts)
+
+require('illuminate').configure({
+    providers = { 'treesitter', 'regex' },
+    delay = 500,
+    min_count_to_highlight = 2
+})
+
 
