@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # Hide warning message on Mac
+# https://apple.stackexchange.com/questions/371997/suppressing-the-default-interactive-shell-is-now-zsh-message-in-macos-catalina
 export BASH_SILENCE_DEPRECATION_WARNING=1
-[ -d /opt/homebrew/bin ] && export PATH=/opt/homebrew/bin:$PATH
+
+# Update PATH for macOS
+[ -d /opt/homebrew/bin ] && export PATH=$PATH:/opt/homebrew/bin
+[ -d /opt/local/bin ] && export PATH=$PATH:/opt/local/bin
 
 [ -f ${HOME}/.bashrc ] && . ${HOME}/.bashrc
 
@@ -23,6 +27,9 @@ export NNN_TMPFILE=$HOME/.config/nnn/.lastd
 export PATH="$HOME/.local/bin/statusbar:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+# https://github.com/keybase/keybase-issues/issues/2798
+export GPG_TTY=$(tty)
 
 # X11 autostart with login on vt1
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR-0}" -eq 1 ] && exec startx ~/.xinitrc "${WM}"
