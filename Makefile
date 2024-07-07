@@ -17,6 +17,7 @@ statusbar_dir = ${HOME}/.local/bin/statusbar
 
 share_icons_dir = ${HOME}/.local/share/icons
 share_completions_dir = ${HOME}/.local/share/bash-completions
+share_applications_dir = ${HOME}/.local/share/applications
 cursor_theme = ArcMidnight-cursors
 
 xorg_conf_dir = /etc/X11/xorg.conf.d
@@ -258,3 +259,12 @@ ${xorg_conf_dir}/00-keyboard.conf: etc/X11/xorg.conf.d/00-keyboard.conf
 	sudo cp $< $@
 
 keyboard: ${xorg_conf_dir}/00-keyboard.conf
+
+${share_applications_dir}/%: .local/share/applications/%
+	install -D -v $< $@
+
+desktop: \
+	${localbin_dir}/mpv-wrapper \
+	${localbin_dir}/sxiv-wrapper \
+	${share_applications_dir}/mpv-wrapper.desktop \
+	${share_applications_dir}/sxiv-wrapper.desktop
