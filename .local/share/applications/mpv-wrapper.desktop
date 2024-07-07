@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=mpv wrapper
+Comment=Watch videos in directory
+Exec=mpv-wrapper %f
+Icon=
+Terminal=false
+MimeType=video/mp4;
+Categories=Video;
+StartupNotify=true

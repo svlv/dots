@@ -21,19 +21,9 @@ shopt -s histappend
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# Sets readline variables
-# Currently it is not used anywhere
-insert_line() {
-     READLINE_LINE=${1}
-     READLINE_POINT=${#1}
-}
-
-# Bind Ctrl-N to call ninja
-bind '"\C-N":"ninja\C-m"'
-
 # Set colorful bash prompt in the folowing way:
-#     [time name@host ~ branch]
-#     $
+#    [time name@host ~ branch]
+#    $
 COLOR1="\033[38;5;14m"
 COLOR2="\033[38;5;1m"
 COLOR3="\033[38;5;3m"
@@ -67,11 +57,9 @@ else
 fi
 
 if [ -d "${HOME}/.local/share/bash-completions" ]; then
-    for fl in "${HOME}/.local/share/bash-completions/*"; do source ${fl}; done
+    for fl in "${HOME}/.local/share/bash-completions/*"; do
+        source ${fl}
+    done
 fi
 
-# Custom completions:
-complete -W 'user1@host1 user2@host2' ssh
-
 set -o emacs # enable vi mode
-

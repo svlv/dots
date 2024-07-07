@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# This script is used to browse through images in a directory
+# after opening a single image with sxiv.
+#
+# It is intended to be used as a desktop entry for file managers
+# to open images with this sxiv wrapper.
+#
+# Usage:
+#   ./sxiv-wrapper.sh <image_path>
+#
+# Arguments:
+#   <image_path> -  Path to the initial image to open with sxiv.
+
+is_image() {
+    grep -iE '\.(jpe?g|png|gif|svg|webp|tiff|heif|avif|ico|bmp)$'
+}
+
+if ! echo "${1}" | is_image; then
+    exit 1
+fi
+
+readarray -t images < <(find "${1%/*}" -type f -print | is_image | sort)
+
+index=$(printf "%s\n" "${images[@]}" | grep -n "^${1}$" | sed "s|:${1}||")
+
+printf "%s\n" "${images[@]}" | sxiv -f -n ${index} -

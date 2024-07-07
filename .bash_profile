@@ -8,28 +8,33 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 [ -d /opt/homebrew/bin ] && export PATH=$PATH:/opt/homebrew/bin
 [ -d /opt/local/bin ] && export PATH=$PATH:/opt/local/bin
 
-[ -f ${HOME}/.bashrc ] && . ${HOME}/.bashrc
-
-[ -f ${HOME}/.priv_environment ] && . ${HOME}/.priv_environment
-
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 export EDITOR="nvim"
 export TERMINAL="alacritty"
-export BROWSER="brave"
 export WM="awesome"
+
+for browser in brave google-chrome-stable; do
+    if command -v ${browser}; then
+        export BROWSER=${browser}
+        break
+    fi
+done
 
 export NNN_BMS="d:$HOME/Documents;D:$HOME/Downloads;m:/mnt"
 export NNN_TMPFILE=$HOME/.config/nnn/.lastd
 
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/bin/statusbar:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
 
 # https://github.com/keybase/keybase-issues/issues/2798
 export GPG_TTY=$(tty)
 
+[ -f ${HOME}/.bashrc ] && . ${HOME}/.bashrc
+
 # X11 autostart with login on vt1
-[ -z "${DISPLAY}" ] && [ "${XDG_VTNR-0}" -eq 1 ] && exec startx ~/.xinitrc "${WM}"
+[ -z "${DISPLAY}" ] && [ "${XDG_VTNR-0}" -eq 1 ] && \
+    exec startx ~/.xinitrc "${WM}"

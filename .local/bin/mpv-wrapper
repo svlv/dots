@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# This script is used to play videos in a directory
+# after opening a single video with mpv.
+#
+# It is intended to be used as a desktop entry for file managers
+# to open videos with this mpv wrapper.
+#
+# Usage:
+#   ./mpv-wrapper.sh <video_path>
+#
+# Arguments:
+#   <video_path> -  Path to the initial video to open with mpv.
+
+is_video() {
+    grep -iE '\.(mp4)$'
+}
+
+if ! echo "${1}" | is_video; then
+    exit 1
+fi
+
+readarray -t videos < <(find "${1%/*}" -type f -print | is_video | sort)
+
+index=$(printf "%s\n" "${videos[@]}" | grep -n "^${1}$" | sed "s|:${1}||")
+(( index-=1 ))
+
+printf "%s\n" "${videos[@]}" | mpv --sub=no --fs --keep-open=always \
+    --playlist-start=${index} --playlist=- --window-maximized=yes \
+    --reset-on-next-file=pause

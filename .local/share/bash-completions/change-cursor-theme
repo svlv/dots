@@ -1,4 +1,3 @@
 #!/bin/bash
 
 complete -W "$(change-cursor-theme list)" change-cursor-theme
-

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=sxiv wrapper
+Comment=Browse through images in directory
+Exec=sxiv-wrapper %f
+Icon=
+Terminal=false
+MimeType=image/jpeg;
+Categories=Graphics;
+StartupNotify=true
