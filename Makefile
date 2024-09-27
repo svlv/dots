@@ -268,3 +268,7 @@ desktop: \
 	${localbin_dir}/sxiv-wrapper \
 	${share_applications_dir}/mpv-wrapper.desktop \
 	${share_applications_dir}/sxiv-wrapper.desktop
+
+/etc/udev/rules.d/usb.rules: etc/udev/rules.d/usb.rules
+	sed "s/%OWNER%/$$SUDO_USER/g" $< > $@
+	udevadm control --reload
