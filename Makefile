@@ -254,12 +254,13 @@ ${fira_code_fonts}:
 ${ttf_fonts_dir}/Symbola.ttf:
 	${call install-font,Symbola}
 
-# keyboard (requires sudo)
+# keyboard configuration (requires sudo)
 ${xorg_conf_dir}/00-keyboard.conf: etc/X11/xorg.conf.d/00-keyboard.conf
 	sudo cp $< $@
 
 keyboard: ${xorg_conf_dir}/00-keyboard.conf
 
+# desktop entries
 ${share_applications_dir}/%: .local/share/applications/%
 	install -D -v $< $@
 
@@ -269,6 +270,11 @@ desktop: \
 	${share_applications_dir}/mpv-wrapper.desktop \
 	${share_applications_dir}/sxiv-wrapper.desktop
 
+# udev rule for mounting removable drives
 /etc/udev/rules.d/usb.rules: etc/udev/rules.d/usb.rules
 	sed "s/%OWNER%/$$SUDO_USER/g" $< > $@
 	udevadm control --reload
+
+# sxiv key-handler
+${HOME}/.config/sxiv/exec/key-handler: .config/sxiv/exec/key-handler
+	install -D -v $< $@

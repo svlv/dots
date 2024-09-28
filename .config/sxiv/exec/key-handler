@@ -1,12 +1,24 @@
 #!/bin/sh
 
+# The exernal key-handler for sxiv, Simple X Image Viewer
+# First you have to press Ctrl-x to send the next key to the key-handler
+#
+# The current bindings:
+# d - to remove selected images
+# p - to print selected images' names
+# r - to rotate selected images
+# w - to set as a wallpaper with xwallpaper
+# y - to yank selected images
+
 _rotate() {
   degree="90"
   tr '\n' '\0' | xargs -0 realpath | sort | uniq | while read file; do
-  case "$(file -b -i "$file")" in
-      image/jpeg*) jpegtran -rotate "$degree" -copy all -outfile "$file" "$file" ;;
-      *)           mogrify  -rotate "$degree" "$file" ;;
-  esac
+    case "$(file -b -i "$file")" in
+      image/jpeg*)
+        jpegtran -rotate "$degree" -copy all -outfile "$file" "$file" ;;
+      *)
+        mogrify  -rotate "$degree" "$file" ;;
+    esac
   done
 }
 
@@ -31,15 +43,14 @@ _yank() {
 _set_wallpaper() {
   monitor=$(xrandr | grep " connected" | awk '{ print$1 }')
   while read file; do
-   xargs xwallpaper --output $monitor --stretch "$file"
+    xargs xwallpaper --output $monitor --stretch "$file"
   done
 }
 
 case "$1" in
-  "p")      _print         ;;
-  "y")      _yank          ;;
-  "d")      _delete        ;;
-  "period") _rotate  90    ;;
-  "w")      _set_wallpaper ;;
+  "d") _delete        ;;
+  "p") _print         ;;
+  "r") _rotate        ;;
+  "w") _set_wallpaper ;;
+  "y") _yank          ;;
 esac
-
