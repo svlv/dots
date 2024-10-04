@@ -82,4 +82,5 @@ require('illuminate').configure({
     min_count_to_highlight = 2
 })
 
-
+vim.api.nvim_set_keymap('n', '<leader>b', ':Buffers<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>f', ':Files<CR>', { noremap = true, silent = true })
