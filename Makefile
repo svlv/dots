@@ -270,10 +270,15 @@ desktop: \
 	${share_applications_dir}/mpv-wrapper.desktop \
 	${share_applications_dir}/sxiv-wrapper.desktop
 
+# TODO: create udev or systemd target
 # udev rule for mounting removable drives
 /etc/udev/rules.d/usb.rules: etc/udev/rules.d/usb.rules
 	sed "s/%OWNER%/$$SUDO_USER/g" $< > $@
 	udevadm control --reload
+
+# TODO: create udev or systemd target
+/etc/systemd/system/getty@tty1.service.d/autologin.conf: etc/systemd/system/getty@tty1.service.d/autologin.conf
+	sed "s/%USERNAME%/$$SUDO_USER/g" $< > $@
 
 # sxiv key-handler
 ${HOME}/.config/sxiv/exec/key-handler: .config/sxiv/exec/key-handler

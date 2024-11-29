@@ -17,7 +17,7 @@ export TERMINAL="alacritty"
 export WM="awesome"
 
 for browser in brave google-chrome-stable; do
-    if command -v ${browser}; then
+    if command -v ${browser} 2>&1 >/dev/null; then
         export BROWSER=${browser}
         break
     fi
