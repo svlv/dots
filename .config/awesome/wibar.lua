@@ -1,5 +1,6 @@
 local awful = require("awful")
 local wibox = require("wibox")
+local gears = require("gears")
 
 local osmiumrc = require("osmiumrc")
 
@@ -7,8 +8,8 @@ local beautiful = require("beautiful")
 local theme_path = string.format(
   "%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), "default")
 beautiful.init(theme_path)
-color0 = beautiful.col0
-color1 = beautiful.col1
+local color0 = beautiful.col0
+local color1 = beautiful.col1
 
 local osmium = require("osmium")
 local arrow_left = osmium.util.separators.arrow_left
@@ -24,7 +25,8 @@ local wibar = {}
 wibar.bin_dir = os.getenv("HOME") .. "/.local/bin/statusbar/"
 local function watch_widget_factory(args)
   return awful.widget.watch(
-    wibar.bin_dir .. args.cmd, args.timeout or 5,
+    args.cmd,
+    args.timeout or 5,
     function(widget, stdout)
       widget:set_text(stdout)
     end,
@@ -37,7 +39,7 @@ local function watch_widget_factory(args)
 end
 
 local function is_laptop()
-  file = io.open("/sys/class/dmi/id/chassis_type", "r")
+  local file = io.open("/sys/class/dmi/id/chassis_type", "r")
   if not file then
     return false
   end
@@ -115,17 +117,43 @@ local lat = osmiumrc.lat and osmiumrc.lat or 51.5072
 local lon = osmiumrc.lon and osmiumrc.lon or 0.1276
 local token = osmiumrc.token
 
-local weather = watch_widget_factory{cmd="atmos-line --get-current-weather-with-pollution".." --lat "..lat.." --lon "..lon, timeout=600}
+local weather_cmd='bash -c "'..
+'set -e;'..
+'export ATMOS_LAT='..lat..';'..
+'export ATMOS_LON='..lon..';'..
+'export ATMOS_TOKEN='..token..';'..
+'weather=$(atmos-line --weather);'..
+'air_pollution=$(atmos-cli --air-pollution);'..
+'echo ${weather} ${air_pollution}"'
+
+local weather =  wibox.widget {
+  valign = "center",
+  widget = wibox.widget.textbox,
+  font = beautiful.font,
+  text = "..."
+}
+
+weather.callback = function(self)
+  awful.spawn.easy_async(weather_cmd,
+    function(stdout, _, _, exitcode)
+      if exitcode == 0 then
+        self:set_text(stdout)
+        gears.timer.start_new(600, function() self:callback() end)
+      else
+        self:set_text("...")
+        gears.timer.start_new(1, function() self:callback() end)
+      end
+    end)
+  -- no more calls
+  return false
+end
+weather:callback()
+
 weather:buttons(awful.util.table.join(
   awful.button({}, 1,
-  function() -- scroll up
-    -- set mouse coords
-    -- mouse.coords {
-    --     x = 185,
-    --     y = 10
-    -- }
-    posx = mouse.coords().x
-    posy = 23
+  function()
+    local posx = mouse.coords().x
+    local posy = 23
     awful.util.spawn("atmos-gui --lat "..lat.." --lon "..lon.." --token "..token.." --posx "..posx.." --posy "..posy, false)
   end)
 ))
@@ -158,14 +186,14 @@ wibar.bar = function (args)
     end
   end
 
-  widgets_str = osmiumrc.widgets_str
+  local widgets_str = osmiumrc.widgets_str
   if not widgets_str then
     widgets_str = is_laptop() and "keyboardlayout,upt,ram,vol,battery,backlight,mailbox,atmos,internet,nettraf,datetime,layoutbox"
                               or  "keyboardlayout,upt,ram,vol,atmos,internet,nettraf,datetime,layoutbox"
   end
 
   local create = watch_widget_factory
-  push_widget_mapping = {
+  local push_widget_mapping = {
     ["keyboardlayout"] = function(is_last) push_widget{widget=awful.widget.keyboardlayout{pattern = "⌨️ %s"},last=is_last} end,
     ["upt"] = function(is_last) push_widget{widget=create{cmd="upt",timeout=60},last=is_last} end,
     ["rate"] = function(is_last) push_widget{widget=create{cmd="rate",timeout=60},last=is_last} end,
@@ -191,7 +219,7 @@ wibar.bar = function (args)
   end
 
   for idx=1, #widgets_arr do
-    func = push_widget_mapping[widgets_arr[idx]]
+    local func = push_widget_mapping[widgets_arr[idx]]
     if func then
         func(idx == #widgets_arr)
     end
@@ -201,3 +229,5 @@ wibar.bar = function (args)
 end
 
 return wibar
+
+-- vim: tabstop=2 shiftwidth=2 expandtab
